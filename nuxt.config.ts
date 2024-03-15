@@ -29,4 +29,9 @@ export default defineNuxtConfig({
   imports: {
     dirs: ["./stores"],
   },
+  runtimeConfig: {
+    firebaseKey: '',
+    accessTokenSecret: '',
+    refreshTokenSecret: '',
+  }
 });
