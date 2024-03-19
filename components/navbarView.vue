@@ -1,19 +1,17 @@
 <template>
   <div class="navbar">
-    <h2 class="title">HELP U FOCUS</h2>
+    <h2 class="title"><NuxtLink to="/">HELP U FOCUS</NuxtLink></h2>
     <div>
       <ul class="menu">
-        <li>閱讀總覽</li>
-        <li>我的植物</li>
-        <li>排名</li>
-        <li>社群</li>
+        <li><NuxtLink to="/readingView">閱讀總覽</NuxtLink></li>
+        <li><NuxtLink to="/myPlantView">我的植物</NuxtLink></li>
+        <li><NuxtLink to="/rankingView">排名</NuxtLink></li>
+        <li><NuxtLink to="/threadsView">社群</NuxtLink></li>
       </ul>
     </div>
     <div>登入</div>
   </div>
 </template>
-
-<script setup></script>
 
 <style lang="scss" scoped>
 .navbar {
@@ -23,6 +21,9 @@
   padding: 0px 80px;
   //   margin: 0 80px;
   align-items: center;
+  a {
+    text-decoration: none;
+  }
 }
 
 .menu {
@@ -30,6 +31,9 @@
   list-style: none;
   li {
     margin-right: 24px;
+    a {
+      text-decoration: none;
+    }
   }
 }
 </style>

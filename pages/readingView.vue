@@ -1,5 +1,8 @@
 <template>
-  <div><div>footer</div></div>
+  <div>
+    hello work
+    <h2>h1</h2>
+  </div>
 </template>
 
 <script setup></script>
