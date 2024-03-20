@@ -9,7 +9,10 @@
         <li><NuxtLink to="/threadsView">社群</NuxtLink></li>
       </ul>
     </div>
-    <div>登入</div>
+    <div class="user">
+      <span class="user-profile"></span>
+      <p>用戶名</p>
+    </div>
   </div>
 </template>
 
@@ -18,11 +21,12 @@
   display: grid;
   grid-template-columns: 2fr 8fr 2fr;
   height: 64px;
-  padding: 0px 80px;
+  padding: 0px 160px;
   //   margin: 0 80px;
   align-items: center;
   a {
     text-decoration: none;
+    color: black;
   }
 }
 
@@ -35,5 +39,17 @@
       text-decoration: none;
     }
   }
+}
+.user-profile {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid black;
+  margin-right: 10px;
+}
+.user {
+  display: flex;
+  align-items: center;
 }
 </style>
