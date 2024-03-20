@@ -7,8 +7,8 @@ export default errorHandler(defineEventHandler((event) => {
         '/api/auth/refresh': true,
     };
 
-    if (!bypass[event.path]) {
-        const authorizationHeader = getHeader(event, 'Authorization');
+    if (Object.hasOwn(bypass, event.path) && !bypass[event.path]) {
+        const authorizationHeader = getHeader(event, 'Authorization') || '';
         const [, accessToken] = authorizationHeader.split(' ');
         const { userData } = verifyAccessToken(accessToken);
         event.context.userData = { ...userData };
