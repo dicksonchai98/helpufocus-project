@@ -22,8 +22,8 @@ export default errorHandler(
     const { accessToken, exp } = generateAccessToken(payload)
 
     return {
-      id: userData.id,
-      email: userData.email,
+      user_id: userData.id,
+      username: userData.username,
       access_token: accessToken,
       expire_at: exp
     }

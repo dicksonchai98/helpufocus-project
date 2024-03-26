@@ -9,13 +9,13 @@ export default errorHandler(
   defineEventHandler(async (event) => {
     const body = await readBody(event)
     const validator = new Validator({ schema: loginSchema })
-    const { email, password } = await validator.validate(body)
+    const { username, password } = await validator.validate(body)
 
     const db = initialFirestore()
     const usersRef = db.collection('users')
     const querySnapshot = await usersRef
-      .select('email', 'password')
-      .where('email', '==', email)
+      .select('username', 'password')
+      .where('username', '==', username)
       .limit(1)
       .get()
     if (querySnapshot.empty) throw createError(LoginError401)
@@ -26,7 +26,7 @@ export default errorHandler(
     const comparedResult = await checkPassword(password, dbPassword)
     if (!comparedResult) throw createError(LoginError401)
 
-    const payload = { userData: { id: userDoc.id, email: userData.email } }
+    const payload = { userData: { id: userDoc.id, username: userData.username } }
     const { accessToken, exp } = generateAccessToken(payload)
     const { refreshToken, jti } = generateRefreshToken(payload)
 
@@ -35,8 +35,8 @@ export default errorHandler(
     await refreshTokenRef.set(data)
 
     return {
-      id: userDoc.id,
-      email: userData.email,
+      user_id: userDoc.id,
+      username: userData.username,
       access_token: accessToken,
       refresh_token: refreshToken,
       expire_at: exp
