@@ -6,6 +6,9 @@ import EmailFormatError400 from './EmailFormatError400'
 import LoginError401 from './LoginError401'
 import TokenInvalidError401 from './TokenInvalidError401'
 import ResourceInvalidError404 from './ResourceInvalidError404'
+import UsernameSpecialCharError400 from './UsernameSpecialCharError400'
+import CurrentPasswordError400 from './CurrentPasswordError400'
+import ConfirmPasswordError400 from './ConfirmPasswordError400'
 
 export {
   InputDataError400,
@@ -15,5 +18,8 @@ export {
   EmailFormatError400,
   LoginError401,
   TokenInvalidError401,
-  ResourceInvalidError404
+  ResourceInvalidError404,
+  UsernameSpecialCharError400,
+  CurrentPasswordError400,
+  ConfirmPasswordError400
 }

@@ -9,21 +9,21 @@ export default errorHandler(
   defineEventHandler(async (event) => {
     const body = await readBody(event)
     const validator = new Validator({ schema: signUpSchema })
-    const { email, name, password } = await validator.validate(body)
+    const { username, password } = await validator.validate(body)
 
     const encryptPassword = await encryptPasswordWithSalt(password)
-    const data = { email, name, password: encryptPassword }
+    const data = { username, password: encryptPassword }
 
     const db = initialFirestore()
     const usersRef = db.collection('users')
 
-    const existUser = await usersRef.select('email').where('email', '==', email).get()
+    const existUser = await usersRef.select('username').where('username', '==', username).get()
     if (!existUser.empty) throw createError(DatabaseDuplicateError409)
 
     try {
       const result = await usersRef.add(data)
 
-      return { id: result.id, name, email }
+      return { user_id: result.id, username }
     } catch (error) {
       throw createError(DatabaseOperationError500)
     }
