@@ -19,6 +19,9 @@
 <style lang="scss" scoped>
 .navbar {
   display: grid;
+  position: fixed;
+  width: 100%;
+  background-color: white;
   grid-template-columns: 2fr 8fr 2fr;
   height: 64px;
   padding: 0px 160px;
