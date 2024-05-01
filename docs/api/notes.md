@@ -6,6 +6,7 @@ Providing various api related to notes, including note list, specific note infor
   - [Note List API](#note-list-api)
   - [Specific Note Information API](#specific-note-information-api)
   - [Add Note API](#add-note-api)
+  - [Delete Note API](#delete-note-api)
 
 <br>
 
@@ -170,6 +171,65 @@ Add a new note
 ```json
 {
   "note_id": "rv8d3Q9NRsGA2oTIgRVh"
+}
+```
+
+<br>
+
+**Failed Response:**
+```json
+{
+  "statusCode": 401,
+  "statusMessage": "Token invalid error.",
+  "message": "Token invalid error.",
+  "data": {
+    "errorCode": "007",
+    "errorMessage": "Token invalid error."
+  }
+}
+```
+
+<br>
+
+## Delete Note API
+Delete a note
+> Route: /api/notes/:id
+>
+> Method: DELETE
+>
+> Token Authentication: Yes, Bearer token authentication
+
+<br>
+
+**URL Parameter:**
+| Name | Type   | Require | Others  |
+| ---- | ------ | ------- | ------- |
+| id   | String | Y       | note id |
+
+Example: /api/notes/4HShkzuXdw7LLf8u8Ro8
+
+<br>
+
+**Request Body:**
+| Name | Type | Require | Others |
+| ---- | ---- | ------- | ------ |
+
+
+<br>
+
+**Error Response:**
+| Error Name                | Error Code | Error Message             | Status Code |
+| ------------------------- | ---------- | ------------------------- | ----------- |
+| DatabaseOperationError500 | 002        | Database operation error. | 500         |
+| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+| ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
+
+<br>
+
+**Successful Response:**
+```json
+{
+  "result": true
 }
 ```
 
