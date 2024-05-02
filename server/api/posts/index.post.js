@@ -10,11 +10,12 @@ export default defineEventHandler({
     const { userData } = event.context
     const body = await readBody(event)
     const validator = new Validator({ schema: addPostSchema })
-    const { post_content: postContent } = await validator.validate(body)
+    const { post_title: postTitle, post_content: postContent } = await validator.validate(body)
     const postData = {
       post_user_id: userData.id,
+      post_title: postTitle,
       post_content: postContent,
-      post_created_time: firebase.firestore.FieldValue.serverTimestamp(),
+      post_created_time: firebase.firestore.FieldValue.serverTimestamp()
     }
 
     try {

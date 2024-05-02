@@ -67,6 +67,10 @@ export const addBookSchema = Joi.object({
   book_total_page: Joi.number().required()
 }).required()
 
+export const patchBookSchema = Joi.object({
+  book_read_page: Joi.number().required()
+}).required()
+
 export const addNoteSchema = Joi.object({
   note_title: Joi.string().required(),
   note_content: Joi.string(),
@@ -74,6 +78,7 @@ export const addNoteSchema = Joi.object({
 }).required()
 
 export const addPostSchema = Joi.object({
+  post_title: Joi.string().required(),
   post_content: Joi.string().required()
 }).required()
 
