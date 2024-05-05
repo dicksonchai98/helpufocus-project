@@ -77,6 +77,15 @@ export const addNoteSchema = Joi.object({
   note_book_id: Joi.string().required()
 }).required()
 
+export const patchNoteSchema = Joi.object({
+  note_title: Joi.string().default(''),
+  note_content: Joi.string().default(''),
+}).required()
+
+export const likeNoteSchema = Joi.object({
+  note_like: Joi.number().valid(1, 0).required()
+}).required()
+
 export const addPostSchema = Joi.object({
   post_title: Joi.string().required(),
   post_content: Joi.string().required()
