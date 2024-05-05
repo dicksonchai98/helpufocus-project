@@ -25,7 +25,10 @@ export default defineEventHandler({
     if (bookData.book_user_id !== userId) throw createError(ResourceInvalidError404)
 
     try {
-      await db.collection('books').doc(id).update({ book_read_page: bookReadPage })
+      await db.collection('books').doc(id).update({
+        book_read_page: bookReadPage,
+        book_updated_time: firebase.firestore.FieldValue.serverTimestamp(),
+      })
 
       return { result: true }
     } catch (error) {
