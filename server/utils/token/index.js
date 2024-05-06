@@ -61,3 +61,12 @@ export function verifyRefreshToken(refreshToken) {
     throw createError(TokenInvalidError401)
   }
 }
+
+export function tokenAuthorization() {
+  return errorHandler(defineEventHandler((event) => {
+    const authorizationHeader = getHeader(event, 'Authorization') || ''
+    const [, accessToken] = authorizationHeader.split(' ')
+    const { userData } = verifyAccessToken(accessToken)
+    event.context.userData = { ...userData }
+  }))
+}
