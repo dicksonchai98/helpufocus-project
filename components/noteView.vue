@@ -9,9 +9,24 @@
         </div>
       </div>
       <div>
-        <div @click="toggleFavour(index)">
+        <div>
           <Icon class="icon" icon="tabler:dots" width="20" height="20" style="color: black" />
-          <Icon icon="twemoji:red-heart" width="20" height="20" />
+          <div>
+            <Icon
+              v-if="notes.note_like == '1'"
+              icon="mdi:heart"
+              width="20"
+              height="20"
+              @click="likeNote(notes.note_id, notes.note_like)"
+            />
+            <Icon
+              v-else
+              icon="mdi:heart-outline"
+              width="20"
+              height="20"
+              @click="likeNote(notes.note_id, notes.note_like)"
+            />
+          </div>
         </div>
         <div @click="editNote(notes.note_id)">
           <Icon icon="ph:note-pencil" width="20" height="20" style="color: white" />
@@ -26,6 +41,28 @@
 import { Icon } from '@iconify/vue'
 
 const useStore = usedefineStore()
+
+const likeNote = async (id, noteLikable) => {
+  const computeNoteLike = () => {
+    if (noteLikable) {
+      return 0
+    } else {
+      return 1
+    }
+  }
+  const noteLike = computeNoteLike()
+  const res = await $fetch(`/api/notes/like/${id}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    },
+    body: {
+      note_like: noteLike
+    }
+  })
+  useStore.getNoteList()
+  console.log(res)
+}
 
 const props = defineProps(['notes', 'editNote'])
 const id = props.notes.note_id

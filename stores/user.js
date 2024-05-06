@@ -50,7 +50,6 @@ export const usedefineStore = defineStore('user', () => {
       await getBookList()
       await getNoteList()
       await getAllPost()
-      await getRank()
       console.log(BookList)
     } catch (error) {
       console.log(error)
@@ -157,7 +156,7 @@ export const usedefineStore = defineStore('user', () => {
   }
 
   const getRank = async () => {
-    const res = await $fetch('api/rank', {
+    const res = await $fetch('/api/rank', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userInfo.value.access_token}`
@@ -237,7 +236,8 @@ export const usedefineStore = defineStore('user', () => {
     getAllPost,
     signUp,
     isLogin,
-    userRank,
-    getRank
+    getRank,
+
+    userRank
   }
 })

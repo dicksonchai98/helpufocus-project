@@ -63,8 +63,8 @@ import { Icon } from '@iconify/vue'
 const useStore = usedefineStore()
 const allUserRank = ref([])
 onMounted(() => {
+  useStore.getRank()
   allUserRank.value = useStore.userRank
-  console.log(allUserRank)
 })
 </script>
 
