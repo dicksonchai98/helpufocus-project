@@ -44,14 +44,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     firebaseKey: '',
     accessTokenSecret: '',
-    refreshTokenSecret: '',
-    firebaseStorage: {
-      authDomain: '',
-      projectId: '',
-      storageBucket: '',
-      messagingSenderId: '',
-      appId: '',
-      measurementId: ''
-    }
+    refreshTokenSecret: ''
   }
 })

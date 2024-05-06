@@ -6,6 +6,12 @@ Providing various api related to notes, including note list, specific note infor
   - [Note List API](#note-list-api)
   - [Specific Note Information API](#specific-note-information-api)
   - [Add Note API](#add-note-api)
+<<<<<<< HEAD
+=======
+  - [Delete Note API](#delete-note-api)
+  - [Patch Note API](#patch-note-api)
+  - [Like Note API](#like-note-api)
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -42,6 +48,10 @@ Get all of notes belong to current user
       "note_book_id": "4HShkzuXdw7LLf8u8Ro8",
       "note_updated_time": 1711410953000,
       "note_created_time": 1711410953000,
+<<<<<<< HEAD
+=======
+      "note_like": 1 // 1 => Liked status, 0 => Normal status
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "note_id": "S7MG1dBBh0GM3Z4bs0Ai",
       "note_book_name": "DragonBall"
     },
@@ -50,6 +60,10 @@ Get all of notes belong to current user
       "note_book_id": "4HShkzuXdw7LLf8u8Ro8",
       "note_updated_time": 1711412217000,
       "note_created_time": 1711412217000,
+<<<<<<< HEAD
+=======
+      "note_like": 0 // 1 => Liked status, 0 => Normal status
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "note_id": "wr6bubcoTMue9WsSqmrm",
       "note_book_name": "DragonBall"
     }
@@ -114,6 +128,10 @@ Example: /api/notes/4HShkzuXdw7LLf8u8Ro8
   "note_content": "ngoiagegg...",
   "note_user_id": "911pO44hhDsqsSljc9Gp",
   "note_title": "Hahaha",
+<<<<<<< HEAD
+=======
+  "note_like": 1 // 1 => Liked status, 0 => Normal status
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
   "note_book_id": "4HShkzuXdw7LLf8u8Ro8",
   "note_updated_time": 1711410953000,
   "note_created_time": 1711410953000,
@@ -189,3 +207,186 @@ Add a new note
 ```
 
 <br>
+<<<<<<< HEAD
+=======
+
+## Delete Note API
+Delete a note
+> Route: /api/notes/:id
+>
+> Method: DELETE
+>
+> Token Authentication: Yes, Bearer token authentication
+
+<br>
+
+**URL Parameter:**
+| Name | Type   | Require | Others  |
+| ---- | ------ | ------- | ------- |
+| id   | String | Y       | note id |
+
+Example: /api/notes/4HShkzuXdw7LLf8u8Ro8
+
+<br>
+
+**Request Body:**
+| Name | Type | Require | Others |
+| ---- | ---- | ------- | ------ |
+
+
+<br>
+
+**Error Response:**
+| Error Name                | Error Code | Error Message             | Status Code |
+| ------------------------- | ---------- | ------------------------- | ----------- |
+| DatabaseOperationError500 | 002        | Database operation error. | 500         |
+| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+| ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
+
+<br>
+
+**Successful Response:**
+```json
+{
+  "result": true
+}
+```
+
+<br>
+
+**Failed Response:**
+```json
+{
+  "statusCode": 401,
+  "statusMessage": "Token invalid error.",
+  "message": "Token invalid error.",
+  "data": {
+    "errorCode": "007",
+    "errorMessage": "Token invalid error."
+  }
+}
+```
+
+<br>
+
+## Patch Note API
+Update note title, note content api
+> Route: /api/notes/:id
+>
+> Method: PATCH
+>
+> Token Authentication: Yes, Bearer token authentication
+
+<br>
+
+**URL Parameter:**
+| Name | Type   | Require | Others  |
+| ---- | ------ | ------- | ------- |
+| id   | String | Y       | note id |
+
+Example: /api/notes/4HShkzuXdw7LLf8u8Ro8
+
+<br>
+
+**Request Body:**
+| Name | Type | Require | Others |
+| ---- | ---- | ------- | ------ |
+
+
+<br>
+
+**Error Response:**
+| Error Name                | Error Code | Error Message             | Status Code |
+| ------------------------- | ---------- | ------------------------- | ----------- |
+| DatabaseOperationError500 | 002        | Database operation error. | 500         |
+| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+| ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
+| InputDataError400         | 001        | Input data error.         | 400         |
+
+<br>
+
+**Successful Response:**
+```json
+{
+  "result": true
+}
+```
+
+<br>
+
+**Failed Response:**
+```json
+{
+  "statusCode": 401,
+  "statusMessage": "Token invalid error.",
+  "message": "Token invalid error.",
+  "data": {
+    "errorCode": "007",
+    "errorMessage": "Token invalid error."
+  }
+}
+```
+
+<br>
+
+## Like Note API
+Like a note api
+> Route: /api/notes/like/:id
+>
+> Method: PATCH
+>
+> Token Authentication: Yes, Bearer token authentication
+
+<br>
+
+**URL Parameter:**
+| Name | Type   | Require | Others  |
+| ---- | ------ | ------- | ------- |
+| id   | String | Y       | note id |
+
+Example: /api/notes/like/4HShkzuXdw7LLf8u8Ro8
+
+<br>
+
+**Request Body:**
+| Name      | Type   | Require | Others                             |
+| --------- | ------ | ------- | ---------------------------------- |
+| note_like | Number | Y       | 1 => Liked it, 0 => Cancel like it |
+
+
+<br>
+
+**Error Response:**
+| Error Name                | Error Code | Error Message             | Status Code |
+| ------------------------- | ---------- | ------------------------- | ----------- |
+| DatabaseOperationError500 | 002        | Database operation error. | 500         |
+| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+| ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
+| InputDataError400         | 001        | Input data error.         | 400         |
+
+<br>
+
+**Successful Response:**
+```json
+{
+  "result": true
+}
+```
+
+<br>
+
+**Failed Response:**
+```json
+{
+  "statusCode": 401,
+  "statusMessage": "Token invalid error.",
+  "message": "Token invalid error.",
+  "data": {
+    "errorCode": "007",
+    "errorMessage": "Token invalid error."
+  }
+}
+```
+
+<br>
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64

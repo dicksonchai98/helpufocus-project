@@ -37,6 +37,7 @@ export const usedefineStore = defineStore('user', () => {
     }
   }
   const allPosts = ref([])
+  const userRank = ref([])
   const BookList = ref([])
   const userInfo = ref([])
   const noteList = ref([])
@@ -49,6 +50,7 @@ export const usedefineStore = defineStore('user', () => {
       await getBookList()
       await getNoteList()
       await getAllPost()
+      await getRank()
       console.log(BookList)
     } catch (error) {
       console.log(error)
@@ -89,7 +91,6 @@ export const usedefineStore = defineStore('user', () => {
       })
       userInfo.value = data
       isLogin.value = true
-      console.log(isLogin)
 
       console.log(userInfo.value)
       return data
@@ -153,6 +154,18 @@ export const usedefineStore = defineStore('user', () => {
     })
     BookList.value = res
     return res.books
+  }
+
+  const getRank = async () => {
+    const res = await $fetch('api/rank', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userInfo.value.access_token}`
+      }
+    })
+    console.log(res)
+    userRank.value = res
+    return res
   }
 
   const toggleTimer = () => {
@@ -223,6 +236,8 @@ export const usedefineStore = defineStore('user', () => {
     allPosts,
     getAllPost,
     signUp,
-    isLogin
+    isLogin,
+    userRank,
+    getRank
   }
 })

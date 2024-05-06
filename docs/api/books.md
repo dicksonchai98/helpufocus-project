@@ -6,6 +6,10 @@ Providing various api related to books, including book list, specific book infor
   - [Book List API](#book-list-api)
   - [Specific Book Information API](#specific-book-information-api)
   - [Add book API](#add-book-api)
+<<<<<<< HEAD
+=======
+  - [Patch book API](#patch-book-api)
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -175,6 +179,10 @@ Add a new book
 | ------------------------- | ---------- | ------------------------- | ----------- |
 | DatabaseOperationError500 | 002        | Database operation error. | 500         |
 | TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+<<<<<<< HEAD
+=======
+| InputDataError400         | 001        | Input data error.         | 400         |
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -201,3 +209,66 @@ Add a new book
 ```
 
 <br>
+<<<<<<< HEAD
+=======
+
+## Patch book API
+Patch a book
+> Route: /api/books/:id
+>
+> Method: PATCH
+>
+> Token Authentication: Yes, Bearer token authentication
+
+<br>
+
+**URL Parameter:**
+| Name | Type   | Require | Others  |
+| ---- | ------ | ------- | ------- |
+| id   | String | Y       | post id |
+
+Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
+
+<br>
+
+**Request Body:**
+| Name           | Type   | Require | Others                       |
+| -------------- | ------ | ------- | ---------------------------- |
+| book_read_page | Number | Y       | Number of book has been read |
+
+<br>
+
+**Error Response:**
+| Error Name                | Error Code | Error Message             | Status Code |
+| ------------------------- | ---------- | ------------------------- | ----------- |
+| DatabaseOperationError500 | 002        | Database operation error. | 500         |
+| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+| ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
+| InputDataError400         | 001        | Input data error.         | 400         |
+
+<br>
+
+**Successful Response:**
+```json
+{
+  "result": true
+}
+```
+
+<br>
+
+**Failed Response:**
+```json
+{
+  "statusCode": 401,
+  "statusMessage": "Token invalid error.",
+  "message": "Token invalid error.",
+  "data": {
+    "errorCode": "007",
+    "errorMessage": "Token invalid error."
+  }
+}
+```
+
+<br>
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64

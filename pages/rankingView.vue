@@ -27,12 +27,12 @@
         <p>已完成</p>
       </div>
       <div class="ranking-container">
-        <div>
+        <div v-for="(rank, index) in allUserRank" :key="rank.user_id">
           <div class="ranking-content">
-            <p>1</p>
+            <p>{{ index }}</p>
             <div class="profile">
               <span class="user-profile"></span>
-              <h2>name</h2>
+              <h2>{{ rank.username }}</h2>
               <div class="tick">
                 <Icon
                   icon="teenyicons:tick-circle-solid"
@@ -52,7 +52,6 @@
               <p>32/50</p>
             </div>
           </div>
-          <div></div>
         </div>
       </div>
     </div>
@@ -61,6 +60,12 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+const useStore = usedefineStore()
+const allUserRank = ref([])
+onMounted(() => {
+  allUserRank.value = useStore.userRank
+  console.log(allUserRank)
+})
 </script>
 
 <style lang="scss" scoped>

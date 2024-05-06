@@ -23,14 +23,27 @@
           </div>
           <div class="post-liked">
             <div>
-              <Icon icon="mdi:heart" width="24" height="24" style="color: red" /><Icon
-                icon="material-symbols:star"
-                width="24"
-                height="24"
-                style="color: #ffd84f"
-              />
+              <div>
+                <Icon
+                  v-if="datas.post_likable"
+                  icon="mdi:heart-outline"
+                  width="24"
+                  height="24"
+                  style="color: grey"
+                  @click="likePost(datas.post_id, datas.post_likable)"
+                />
+                <Icon
+                  v-else
+                  icon="mdi:heart"
+                  width="24"
+                  height="24"
+                  style="color: red"
+                  @click="likePost(datas.post_id, datas.post_likable)"
+                />
+              </div>
+              <Icon icon="material-symbols:star" width="24" height="24" style="color: #ffd84f" />
             </div>
-            <p>10次讚</p>
+            <p>{{ datas.post_likes }}次讚</p>
           </div>
         </div>
       </div>
@@ -136,8 +149,34 @@ const data = ref([
 onMounted(() => {
   watchEffect(() => {
     posts.value = useStore.allPosts
+    console.log(posts.value)
   })
 })
+
+const likePost = async (id, postLikable) => {
+  const computePostLike = () => {
+    if (postLikable) {
+      return 1
+    } else {
+      return -1
+    }
+  }
+  const postLike = computePostLike()
+
+  console.log(postLike)
+  const res = await $fetch(`/api/posts/${id}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    },
+    body: {
+      post_likes: postLike
+    }
+  })
+  useStore.getAllPost()
+  console.log(res)
+  console.log(postLike)
+}
 
 const addPost = async () => {
   if (post.content !== '') {
