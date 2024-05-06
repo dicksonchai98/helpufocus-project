@@ -22,14 +22,19 @@
           style="color: black"
           @click="toggleShow"
         />
-        <Icon class="icon" icon="material-symbols-light:add" style="color: black" @click="show" />
+        <Icon
+          class="icon"
+          icon="material-symbols-light:add"
+          style="color: black"
+          @click="getBookList()"
+        />
       </div>
-      <div v-for="(notes, index) in data" :key="index" class="notebook-list">
+      <div v-for="(notes, index) in post" :key="index" class="notebook-list">
         <div class="note-container">
           <div class="book-img"><img src="" alt="" /></div>
           <div class="booklist-content">
             <div>
-              <h3 class="note-title">{{ notes.title }}</h3>
+              <h3 class="note-title">{{ notes.book_name }}</h3>
               <div class="note-setting">
                 <Icon icon="tabler:dots" style="color: white" />
                 <ul class="menu">
@@ -44,7 +49,7 @@
             </div>
             <div class="note-content">
               <div>已完成{{ notes.page }}頁</div>
-              <div>還剩下{{ notes.pages }}頁</div>
+              <div>還剩下{{ post }}頁</div>
             </div>
             <div class="read-btn">
               <button>
@@ -76,6 +81,20 @@ const data = ref([
 ])
 
 const progress = ref(80)
+
+let post = []
+
+const getBookList = async () => {
+  try {
+    const res = await useFetch('/api/books')
+    post = res.books
+    console.log(res.data.book_id)
+    return res.books
+  } catch (error) {
+    console.error('獲取書籍列表時出錯：', error)
+    return null // 或者其他你想要返回的值
+  }
+}
 </script>
 
 <style lang="scss" scoped>
