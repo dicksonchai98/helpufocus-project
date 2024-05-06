@@ -6,7 +6,10 @@ Providing various api related to posts, including post list, add note, like post
   - [Post List API](#post-list-api)
   - [Add Post API](#add-post-api)
   - [Like Post API](#like-post-api)
+<<<<<<< HEAD
+=======
   - [Delete Post API](#delete-post-api)
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -39,7 +42,10 @@ Get all of posts
 {
   "posts": [
     {
+<<<<<<< HEAD
+=======
       "post_title": "herheh"
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "post_content": "hey",
       "post_user_id": "911pO44hhDsqsSljc9Gp",
       "post_created_time": 1711427692000,
@@ -49,7 +55,10 @@ Get all of posts
       "post_id": "G2XCKiVdYV2yX89pP8vq"
     },
     {
+<<<<<<< HEAD
+=======
       "post_title": "gregeg"
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "post_content": "nbireonbienbekbnladfkbnqhjtyem",
       "post_likes": 1,
       "post_user_id": "911pO44hhDsqsSljc9Gp",
@@ -90,10 +99,16 @@ Add a new post
 <br>
 
 **Request Body:**
+<<<<<<< HEAD
+| Name         | Type | Require | Others       |
+| ------------ | ---- | ------- | ------------ |
+| post_content | Text | Y       | Post content |
+=======
 | Name         | Type   | Require | Others       |
 | ------------ | ------ | ------- | ------------ |
 | post_title   | String | Y       | Post title   |
 | post_content | Text   | Y       | Post content |
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -102,7 +117,10 @@ Add a new post
 | ------------------------- | ---------- | ------------------------- | ----------- |
 | DatabaseOperationError500 | 002        | Database operation error. | 500         |
 | TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+<<<<<<< HEAD
+=======
 | InputDataError400         | 001        | Input data error.         | 400         |
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -162,6 +180,8 @@ Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 | DatabaseOperationError500 | 002        | Database operation error. | 500         |
 | TokenInvalidError401      | 007        | Token invalid error.      | 401         |
 | ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
+<<<<<<< HEAD
+=======
 | InputDataError400         | 001        | Input data error.         | 400         |
 
 <br>
@@ -221,6 +241,7 @@ Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 | DatabaseOperationError500 | 002        | Database operation error. | 500         |
 | TokenInvalidError401      | 007        | Token invalid error.      | 401         |
 | ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
+>>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 

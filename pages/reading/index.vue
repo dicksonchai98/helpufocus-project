@@ -4,44 +4,46 @@
       <div v-show="isShow" class="popup-box">
         <div class="popup">
           <div class="content">
-            <div class="progressbar-content">
-              <div class="book-page">
-                <p>
-                  <Icon
-                    icon="typcn:tick"
-                    width="25"
-                    height="25"
-                    style="color: #00a52e"
-                  />我已看了77頁
-                </p>
-                <h1>40<span>%</span></h1>
-              </div>
-              <div class="progress-container">
-                <div class="progress">
-                  <div :style="{ width: progress + '%' }" class="progress__fill"></div>
-                  <span class="progress__text">{{ progress }}%</span>
-                </div>
-                <p>124 / 240</p>
-              </div>
-            </div>
-
-            <form v-show="isShow" action="#">
+            <form action="#">
+              <h2>新增書單</h2>
+              <!-- <div>
+                <label class="file" for="fileInput"
+                  ><Icon icon="wi:cloud-up" width="48" height="48" style="color: black" />Browse to
+                  upload file</label
+                ><input id="fileInput" type="file" />
+              </div> -->
+              <label id="dropcontainer" for="file" class="drop-container">
+                <Icon
+                  v-if="!book.file"
+                  icon="wi:cloud-up"
+                  width="48"
+                  height="48"
+                  style="color: black"
+                />
+                <span v-if="!book.file" class="drop-title">Drop files to upload or browser</span>
+                <input
+                  id="file"
+                  :class="{ file: book.file }"
+                  type="file"
+                  accept="image/*"
+                  required
+                  @change="handleFileChange"
+                />
+              </label>
               <div>
-                <input v-model="data.title" placeholder="點擊開始打字..." type="text" />
-              </div>
-              <div>
-                <img v-show="!data.content" src="../../public/Graphic 6.svg" alt="" />
-                <textarea
-                  v-model="data.content"
-                  :class="{ 'text-area': data.content }"
-                  placeholder="開始寫點東西吧....."
-                ></textarea>
+                <label for=""><h2>書名</h2></label>
+                <input id="book_name" v-model="book.title" name="book_name" required type="text" />
               </div>
               <div>
-                <button @click.prevent="toggleShow()">取消</button>
+                <label for=""><h2>頁數</h2></label>
+                <input id="book_total_page" v-model="book.page" required name="book_total_page" />
+              </div>
+              <div>{{ errorMsg.statusMessage }}</div>
+              <div>
+                <button @click.prevent="toggleShow">取消</button>
                 <button
-                  :class="{ btn: data.content == '' || data.title == '' }"
-                  @click.prevent="addNotes()"
+                  :class="{ btn: book.page == '' || book.title == '' || book.file == null }"
+                  @click.prevent="addBooks()"
                 >
                   新增
                 </button>
@@ -82,31 +84,15 @@
               style="color: #ff7512"
               width="43px"
               height="43px"
-              @click="test()"
+              @click="toggleShow"
             />
-            <ul>
-              <li @click="toggleShow()">
-                <Icon icon="ph:note-pencil" width="20" height="20" style="color: orange" />
-                <h3>新增筆記</h3>
-              </li>
-              <li>
-                <Icon icon="bytesize:book" width="20" height="20" style="color: orange" />
-                <h3>新增書單</h3>
-              </li>
-              <li @click="useStore.toggleTimers()">
-                <Icon icon="ph:clock-light" width="20" height="20" style="color: orange" />
-                <h3>計時器</h3>
-              </li>
-            </ul>
           </div>
-          <TimerView v-show="useStore.isShow" />
 
           <div v-show="useStore.isTimerRunning" ref="wrapper" class="timer">
             <div v-show="useStore.isTimerStop" class="timers">
               <img src="../../public/graphic5.svg" alt="" />
               <div><button>取消</button><button>提交</button></div>
             </div>
-
             <Icon
               class="header"
               icon="akar-icons:drag-vertical"
@@ -123,27 +109,12 @@
           </div>
         </div>
         <div>
-          <div>
-            <Icon icon="mingcute:left-fill" width="25" height="25" style="color: black" />
-            <nuxt-link to="/reading"
-              ><p>{{ bookName }} 🏃🏻‍♀️</p></nuxt-link
-            >
-          </div>
-          <ul>
-            <li :class="{ 'seleted-btn': filters === 'all' }" @click.prevent="filters = 'all'">
-              所有筆記
-            </li>
-            <li
-              :class="{ 'seleted-btn': filters === 'flavored' }"
-              @click.prevent="filters = 'flavored'"
-            >
-              喜愛筆記
-            </li>
-          </ul>
+          <Icon icon="mingcute:right-fill" width="30" height="30" style="color: #cbcbcb" />
+          <p>選一本好書吧 🏃🏻‍♀️</p>
         </div>
         <div>
-          <div v-for="notes in book" :key="notes.note_id" class="notebook-list">
-            <NoteView :edit-note="editNote" :notes="notes" />
+          <div v-for="note in bookLists.books" :key="note.book_id" class="notebook-list">
+            <BookView :note="note" />
           </div>
         </div>
       </div>
@@ -153,152 +124,28 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
-import TimerView from '../components/timersView.vue'
-import NoteView from '../components/noteView.vue'
-
+import BookView from '../../components/bookView.vue'
+definePageMeta({
+  middleware: 'auth'
+})
 const useStore = usedefineStore()
-const progress = ref(80)
-const { id } = useRoute().params
-const filters = ref('all')
-const noteLists = ref([])
-console.log(id)
 
-const bookName = computed(() => {
-  const foundBook = book.value.find((book) => book.note_book_id === id)
-  return foundBook ? foundBook.note_book_name : null
+const progress = computed((a, b) => {
+  return a / b
 })
 
-const book = computed(() => {
-  formattedDates()
-  return noteLists.value.filter((n) => n.note_book_id === id)
-})
-
-const formattedDates = () => {
-  noteLists.value.forEach(function (item) {
-    // 将日期字符串转换为 Date 对象
-    const dateObj = new Date(item.note_updated_time)
-
-    // 使用适当的日期时间函数或库来格式化日期，这里示例为 YYYY/MM/DD 格式
-    const formattedDate = dateObj.toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    })
-
-    // 更新原始数组中的日期值
-    item.note_updated_time = formattedDate
-
-    // 输出更新后的 noteLists 数组
-  })
-}
-
-const test = () => {
-  console.log(useStore.noteList)
-}
-const note = ref([
-  {
-    title: '書本',
-    content:
-      '書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容',
-    formattedDate: new Date()
-  },
-  {
-    title: '書本',
-    content:
-      '書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容',
-    formattedDate: new Date()
-  }
-])
-
-const data = reactive({
+const book = reactive({
   title: '',
-  content: ''
+  page: '',
+  file: null
 })
-
-const isEdit = ref(false)
-const updateId = ref(0)
-
-const getNoteContent = async (id) => {
-  const res = await $fetch(`/api/notes/${id}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${useStore.userInfo.access_token}`
-    }
-  })
-  return res
-}
-
-const editNote = async (id) => {
-  isEdit.value = !isEdit.value
-  const res = await getNoteContent(id)
-  toggleShow(res)
-}
-
-const addNotes = async () => {
-  if (data.title !== '' && data.content !== '') {
-    if (!isEdit.value) {
-      const res = await $fetch('/api/notes', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${useStore.userInfo.access_token}`
-        },
-        body: {
-          note_title: data.title,
-          note_content: data.content,
-          note_book_id: id
-        }
-      })
-      isShow.value = !isShow.value
-      useStore.getNoteList()
-      console.log(res)
-    } else {
-      isShow.value = !isShow.value
-      isEdit.value = !isEdit.value
-    }
-  }
-  data.title = ''
-  data.content = ''
-}
-
-// const addNote = () => {
-//   if (data.title !== '' && data.content !== '') {
-//     if (!isEdit.value) {
-//       const currentDate = new Date()
-//       // 格式化日期
-//       const options = { month: 'long', day: 'numeric', year: 'numeric' }
-//       data.formattedDate = currentDate.toLocaleDateString('en-US', options)
-//       const newData = { ...data }
-
-//       note.value.push(newData)
-//       isShow.value = !isShow.value
-//     } else {
-//       const currentDate = new Date()
-//       // 格式化日期
-//       const options = { month: 'long', day: 'numeric', year: 'numeric' }
-//       data.formattedDate = currentDate.toLocaleDateString('en-US', options)
-//       const newData = { ...data }
-//       note.value[updateId.value] = newData
-//       isShow.value = !isShow.value
-//       isEdit.value = !isEdit.value
-//     }
-//   }
-//   // 清空 data 中的 title 和 content
-//   data.title = ''
-//   data.content = ''
-//   data.formattedDate = ''
-// }
 
 const isShow = ref(false)
-const toggleShow = (res) => {
+const toggleShow = () => {
   isShow.value = !isShow.value
-  if (res) {
-    data.title = res.note_title
-    data.content = res.note_content
-    updateId.value = res.note_id
-  } else {
-    data.title = ''
-    data.content = ''
-  }
+  book.title = ''
+  book.page = ''
+  book.file = null
 }
 
 const wrapper = ref(null)
@@ -326,18 +173,72 @@ const onMouseDown = (event) => {
   document.addEventListener('mouseup', onMouseUp)
 }
 
+const bookLists = ref([])
+
 onMounted(() => {
   watchEffect(() => {
-    noteLists.value = useStore.noteList
+    bookLists.value = useStore.BookList
   })
 })
+
+const dropContainer = ref(null)
+const fileInput = ref(null)
+
+const handleDrop = (event) => {
+  event.preventDefault()
+  dropContainer.value.classList.remove('drag-active')
+  fileInput.value.files = event.dataTransfer.files
+}
+
+const handleDragEnter = () => {
+  dropContainer.value.classList.add('drag-active')
+}
+
+const handleDragLeave = () => {
+  dropContainer.value.classList.remove('drag-active')
+}
+
+const fileSelected = (event) => {
+  const files = event.target.files
+  console.log('上传的文件：', files)
+  // 这里可以编写上传文件的逻辑，比如发送给服务器等
+}
+const handleFileChange = (event) => {
+  const file = event.target.files[0]
+  book.file = file // 将文件信息保存到 formData 中的 avatar 字段
+}
+
+const errorMsg = ref('')
+
+const addBooks = async () => {
+  try {
+    const files = new FormData()
+    files.append('file', book.file ? book.file : '')
+    files.append('book_name', book.title)
+    files.append('book_total_page', book.page)
+    const res = await $fetch('/api/books', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${useStore.userInfo.access_token}`
+      },
+      body: files
+    })
+    isShow.value = !isShow.value
+    useStore.getBookList()
+    console.log(res)
+    book.title = ''
+    book.page = ''
+    book.file = null
+    return res
+  } catch (error) {
+    console.log(error)
+    errorMsg.value = error
+    return error
+  }
+}
 </script>
 
 <style lang="scss" scoped>
-.white {
-  background-color: white;
-}
-
 .body {
   background-color: #fbfbfb;
   .container {
@@ -357,33 +258,9 @@ onMounted(() => {
     height: 43px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    a {
-      list-style: none;
-      text-decoration: none;
-    }
-    div {
-      display: flex;
-      align-items: center;
-    }
     p {
       font-size: 24px;
-      color: black;
-    }
-    ul {
-      display: flex;
-      list-style: none;
-      width: 256px;
-      border-radius: 4px;
-      border: 1px solid #f75c5c;
-      li:first-child {
-      }
-      li {
-        text-align: center;
-        line-height: 40px;
-        width: 128px;
-      }
+      color: #cbcbcb;
     }
   }
   > div:nth-child(3) {
@@ -392,16 +269,6 @@ onMounted(() => {
     margin-top: 10px;
   }
 }
-.seleted-btn {
-  text-align: center;
-  line-height: 40px;
-  width: 128px;
-  border-radius: 4px;
-  border: 1px solid #f75c5c;
-  color: white;
-  background-color: #f75c5c;
-}
-
 .notebook-title {
   justify-content: space-between;
   font-size: 20px;
@@ -467,6 +334,7 @@ onMounted(() => {
 }
 .notebook-list {
   width: 100%;
+  height: auto;
 }
 
 .note-setting {
@@ -534,51 +402,105 @@ onMounted(() => {
   width: 509px;
   height: 90%;
   background-color: white;
-  padding: 20px;
+  padding: 40px;
   border-radius: 4px;
   transition: all 0.3s ease;
   z-index: 100;
   box-shadow: 0px 12px 32px 0px #00000012;
 
-  input,
-  textarea {
+  input {
     width: 100%;
     height: 30px;
-    padding: 10px;
-    outline: none;
+    padding: 20px 5px;
     font-size: 17px;
-    border-radius: 4px;
-    border: none;
     margin-bottom: 10px;
+    border: none;
+    border-bottom: 1px solid #a6d1b2;
   }
-  textarea {
-    height: 100px;
-    resize: none;
-    padding: auto;
-    text-align: center;
-  }
-  .text-area {
-    height: 307px;
-  }
+
   form {
-    img {
-      width: 143px;
-      height: 207px;
+    div:nth-child(3) {
+      margin-top: 30px;
     }
-    margin-top: 20px;
     div:last-child {
       display: flex;
       justify-content: space-around;
     }
-    div:nth-child(2) {
+    // .file {
+    //   width: 448px;
+    //   height: 173px;
+    //   padding: 10px;
+    //   background-color: #f0f0f0;
+    //   border: 1px dashed #ccc;
+    //   cursor: pointer;
+    //   text-align: center;
+    //   display: flex;
+    //   flex-direction: column;
+    //   justify-content: center;
+    //   align-items: center;
+    //   margin: auto;
+    // }
+    .drop-container {
+      margin-top: 30px;
+      position: relative;
       display: flex;
+      gap: 10px;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
+      height: 200px;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px dashed #a6d1b2;
+      color: #444;
+      background-color: #f4fbf6;
+      cursor: pointer;
+      transition:
+        background 0.2s ease-in-out,
+        border 0.2s ease-in-out;
+    }
+
+    .drop-container:hover,
+    .drop-container.drag-active {
+      background: #eee;
+    }
+
+    .drop-container:hover .drop-title,
+    .drop-container.drag-active .drop-title {
+      color: #222;
+    }
+
+    .drop-title {
+      color: #444;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      transition: color 0.2s ease-in-out;
+    }
+
+    input[type='file'] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .file[type='file'] {
+      display: block;
+      width: 100%;
+      height: 100%;
+      color: #444;
+      padding: 5px;
+      border: none;
+      opacity: 1;
+    }
+    input[type='file']::file-selector-button {
+      display: none;
     }
   }
-  hr {
-    margin-top: 20px;
-  }
+
   label {
     display: block;
     margin-bottom: 5px;
@@ -594,7 +516,7 @@ onMounted(() => {
     background-color: #ffffff;
     font-size: 20px;
     font-weight: 700;
-    margin-top: 80px;
+    margin-top: 60px;
   }
   .btn {
     background-color: #e1e1e1;
@@ -603,10 +525,10 @@ onMounted(() => {
     pointer-events: none;
   }
 }
-
 .menu li {
   cursor: pointer;
 }
+
 .timers {
   height: 280px;
   display: block;
@@ -713,6 +635,7 @@ onMounted(() => {
   overflow: hidden;
   display: flex;
   justify-content: space-between;
+  z-index: 0;
 }
 
 .progress__fill {
@@ -725,6 +648,7 @@ onMounted(() => {
 .progress-container {
   display: flex;
   justify-content: space-between;
+
   p {
     width: 105px;
     font-size: 14px;

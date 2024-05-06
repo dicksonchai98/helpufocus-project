@@ -9,6 +9,7 @@
       <!-- 當計時器運行時阻止訪問其他頁面的警告訊息 -->
       <div v-if="timerRunning">
         <p>請勿離開本頁面，計時器仍在運行。</p>
+        <img src="../assets/scss/clone.png" alt="" />
       </div>
     </div>
   </div>
