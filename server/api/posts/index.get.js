@@ -10,23 +10,36 @@ export default defineEventHandler({
         .collection('posts')
         .orderBy('post_created_time', 'desc')
         .get()
+      const usersQuerySnapshot = await db.collection('users').get()
       const posts = []
-
-      postsQuerySnapshot.forEach((snapshot) => posts.push(snapshot))
-      const result = await Promise.all(posts.map(async (snapshot) => {
-        const likesCollection = await snapshot.ref.collection(userData.id).get()
+      const userMap = new Map()
+      usersQuerySnapshot.forEach((snapshot) => {
         const data = snapshot.data()
         const id = snapshot.id
-        const postData = {
-          ...data,
-          post_self: userData.id === data.post_user_id,
-          post_likable: likesCollection.empty,
-          post_likes: likesCollection.size,
-          post_id: id,
-          post_created_time: data.post_created_time._seconds * 1000
-        }
-        return postData
-      }))
+        userMap.set(id, data)
+      })
+
+      postsQuerySnapshot.forEach((snapshot) => posts.push(snapshot))
+      const result = await Promise.all(
+        posts.map(async (snapshot) => {
+          const likesCollection = await snapshot.ref.collection(userData.id).get()
+          const likeCollections = await snapshot.ref.listCollections()
+          const data = snapshot.data()
+          const id = snapshot.id
+          const postUser = userMap.get(data.post_user_id) || {}
+          const postUsername = postUser.username || ''
+          const postData = {
+            ...data,
+            post_self: userData.id === data.post_user_id,
+            post_username: postUsername,
+            post_likable: likesCollection.empty,
+            post_likes: likeCollections.length,
+            post_id: id,
+            post_created_time: data.post_created_time._seconds * 1000
+          }
+          return postData
+        })
+      )
 
       result.sort((a, b) => b.post_created_time - a.post_created_time)
 
