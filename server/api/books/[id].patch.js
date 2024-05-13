@@ -1,3 +1,5 @@
+import firebase from 'firebase-admin'
+
 import {
   DatabaseOperationError500,
   InputDataError400,
@@ -27,7 +29,7 @@ export default defineEventHandler({
     try {
       await db.collection('books').doc(id).update({
         book_read_page: bookReadPage,
-        book_updated_time: firebase.firestore.FieldValue.serverTimestamp(),
+        book_updated_time: firebase.firestore.FieldValue.serverTimestamp()
       })
 
       return { result: true }
