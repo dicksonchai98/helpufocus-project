@@ -48,7 +48,7 @@
                   required
                 />
               </div>
-              <p class="errormsg">{{ useStore.loginError }}</p>
+              <p class="errormsg">{{ useStore.loginError.statusMessage }}</p>
               <button type="submit">登入</button>
               <p><a href="#">忘記密碼？/ 密碼</a></p>
               <p>還沒有帳號嗎？ 😢<a href="#" @click="toggleLogin"> 立即註冊吧</a></p>
@@ -58,7 +58,7 @@
         <div v-else class="login">
           <div class="login-container">
             <h1>Sign Up</h1>
-            <form @submit.prevent="useStore.signUp()">
+            <form @submit.prevent="signUps()">
               <div class="form-group">
                 賬號
                 <input
@@ -102,6 +102,11 @@ const test = () => {
 const user = ref('')
 const toggleLogin = () => {
   isLogin.value = !isLogin.value
+}
+
+const signUps = () => {
+  isLogin.value = !isLogin.value
+  useStore.signUp()
 }
 
 onMounted(() => {
@@ -191,6 +196,7 @@ body .logins {
       height: 53px;
       border-radius: 60px;
       margin-top: 33px;
+      cursor: pointer;
     }
   }
 }
@@ -258,5 +264,6 @@ button {
   color: white;
   margin-bottom: 14px;
   border: none;
+  cursor: pointer;
 }
 </style>

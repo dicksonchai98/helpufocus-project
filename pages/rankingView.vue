@@ -4,19 +4,21 @@
       <div class="progressbar-content">
         <div class="book-page">
           <p>
-            <Icon icon="typcn:tick" width="25" height="25" style="color: #00a52e" />已經讀了70本書
+            <Icon icon="typcn:tick" width="25" height="25" style="color: #00a52e" />已經讀了{{
+              bookFinished
+            }}本書
           </p>
-          <h1>40<span>%</span></h1>
+          <h1>{{ percentage || 0 }}<span>%</span></h1>
         </div>
         <div class="progress-container">
           <div class="progress">
-            <div :style="{ width: progress + '%' }" class="progress__fill"></div>
-            <span class="progress__text">{{ progress }}%</span>
+            <div :style="{ width: percentage + '%' }" class="progress__fill"></div>
+            <span class="progress__text"></span>
           </div>
-          <p>還剩下24本書</p>
+          <p>還剩下{{ bookList.length - bookFinished }}本書</p>
         </div>
       </div>
-      <div class="book-img"><img src="../../public/graphic3.svg" alt="" /></div>
+      <div class="book-img"><img src="../public/graphic3.svg" alt="" /></div>
     </div>
     <div class="notebook-container">
       <div class="notebook-title">
@@ -27,9 +29,12 @@
         <p>已完成</p>
       </div>
       <div class="ranking-container">
-        <div v-for="(rank, index) in allUserRank" :key="rank.user_id">
-          <div class="ranking-content">
-            <p>{{ index }}</p>
+        <div v-for="(rank, index) in allUserRank.rank" :key="rank.user_id">
+          <div
+            class="ranking-content"
+            :class="{ user: rank.user_id === useStore.userInfo.user_id }"
+          >
+            <p>{{ index + 1 }}</p>
             <div class="profile">
               <span class="user-profile"></span>
               <h2>{{ rank.username }}</h2>
@@ -44,12 +49,21 @@
             </div>
             <div class="progress-container">
               <div class="progress">
-                <div :style="{ width: progress + '%' }" class="progress__fill"></div>
+                <div
+                  :style="{
+                    width:
+                      rank.books_total !== 0
+                        ? (rank.books_finished / rank.books_total) * 100 + '%'
+                        : '0%'
+                  }"
+                  class="progress__fill"
+                ></div>
+
                 <span class="progress__text">80%</span>
               </div>
             </div>
             <div>
-              <p>32/50</p>
+              <p>{{ rank.books_finished + '/' + rank.books_total }}</p>
             </div>
           </div>
         </div>
@@ -60,11 +74,31 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+definePageMeta({
+  middleware: 'auth'
+})
 const useStore = usedefineStore()
 const allUserRank = ref([])
+const bookList = ref([])
+
+const bookFinished = computed(() => {
+  let completeBook = 0
+  bookList.value.forEach((book) => {
+    if (book.book_read_page / book.book_total_page === 1) completeBook++
+  })
+  return completeBook
+})
+
+const percentage = computed(() => {
+  return (bookFinished.value / bookList.value.length) * 100
+})
 onMounted(() => {
-  useStore.getRank()
-  allUserRank.value = useStore.userRank
+  watchEffect(() => {
+    allUserRank.value = useStore.userRank
+    bookList.value = useStore.BookList
+    console.log(useStore.userInfo.user_id)
+    console.log(allUserRank.value.rank)
+  })
 })
 </script>
 
@@ -107,7 +141,7 @@ onMounted(() => {
     }
   }
   p {
-    margin-right: 50px;
+    margin-right: 55px;
     color: #00a52e;
   }
   .icon {
@@ -124,13 +158,14 @@ onMounted(() => {
   margin-right: 10px;
 }
 .profile .tick {
-  position: relative;
-  top: 18px;
-  left: -86px;
+  position: absolute;
+  margin-top: 33px;
+  margin-left: 25px;
 }
 .profile {
   display: flex;
   align-items: center;
+  width: 230px;
 }
 
 .notebook-title ul li:hover {
@@ -224,5 +259,12 @@ onMounted(() => {
   width: 100%;
   height: 100px;
   justify-content: space-around;
+  margin-bottom: 10px;
+  padding: 20px 36px 20px 36px;
+}
+.user {
+  background-color: #ffe7d7;
+  padding: 20px 36px 20px 36px;
+  border-radius: 8px;
 }
 </style>

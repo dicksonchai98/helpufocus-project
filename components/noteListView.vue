@@ -10,15 +10,7 @@
       </div>
       <div>
         <div>
-          <div class="icons">
-            <Icon class="icon" icon="tabler:dots" width="20" height="20" style="color: black" />
-            <ul class="delete-note" @click="deleteNote(id)">
-              <li>
-                <Icon icon="material-symbols:delete" width="20" height="20" style="color: orange" />
-                <h3>刪除</h3>
-              </li>
-            </ul>
-          </div>
+          <div class="icons"></div>
           <div>
             <Icon
               v-if="notes.note_like == '1'"
@@ -39,7 +31,7 @@
         </div>
         <div @click="editNote(notes.note_id)">
           <Icon icon="ph:note-pencil" width="20" height="20" style="color: white" />
-          <p>編輯</p>
+          <p>選擇</p>
         </div>
       </div>
     </div>
@@ -94,15 +86,6 @@ onMounted(() => {
     getNoted()
   })
 })
-
-watch(
-  () => useStore.noteList.value,
-  () => {
-    console.log('hello')
-    getNoted()
-  },
-  { deep: true }
-)
 
 const deleteNote = async (id) => {
   const res = await $fetch(`/api/notes/${id}`, {
@@ -171,9 +154,8 @@ const deleteNote = async (id) => {
     }
   }
   .note-content {
-    height: 64px;
+    height: 60px;
     width: 420px;
-    overflow: hidden;
   }
   .progress-container {
     display: flex;

@@ -1,22 +1,84 @@
 <template>
   <div class="body">
+    <div v-show="isShow" class="popup-box">
+      <div class="popup">
+        <div class="popup-title">
+          <div @click="toggleShow">
+            <Icon icon="mingcute:left-fill" width="25" height="25" style="color: black" />
+            <p>選擇上傳筆記🏃🏻‍♀️</p>
+          </div>
+          <ul>
+            <li :class="{ 'seleted-btn': filters === 'all' }" @click.prevent="filters = 'all'">
+              所有筆記
+            </li>
+            <li
+              :class="{ 'seleted-btn': filters === 'flavored' }"
+              @click.prevent="filters = 'flavored'"
+            >
+              喜愛筆記
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div
+            v-for="notes in noteLists"
+            v-show="filters === 'all'"
+            :key="notes.note_id"
+            class="notebook-list"
+          >
+            <NoteListView :edit-note="editNote" :notes="notes" />
+          </div>
+          <div
+            v-for="notes in flavoredNote"
+            v-show="filters === 'flavored'"
+            :key="notes.note_id"
+            class="notebook-list"
+          >
+            <NoteListView :notes="notes" />
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="social-container">
       <div class="post-container">
         <div v-for="datas in posts" :key="datas.index" class="post">
           <div class="profile">
-            <span class="user-profile"></span>
-            <div class="tick">
-              <Icon
-                icon="teenyicons:tick-circle-solid"
-                width="25"
-                height="25"
-                style="color: green"
-              />
+            <div>
+              <span class="user-profile"></span>
+              <div class="tick">
+                <Icon
+                  icon="teenyicons:tick-circle-solid"
+                  width="25"
+                  height="25"
+                  style="color: green"
+                />
+              </div>
+              <h2>{{ datas.post_user_id }}</h2>
             </div>
-            <h2>namedwdwd</h2>
+            <div class="icons">
+              <Icon
+                v-show="datas.post_user_id === useStore.userInfo.user_id"
+                class="icon"
+                icon="tabler:dots"
+                width="20"
+                height="20"
+                style="color: black"
+              />
+              <ul class="delete-note" @click="deleteNote(datas.post_id)">
+                <li>
+                  <Icon
+                    icon="material-symbols:delete"
+                    width="20"
+                    height="20"
+                    style="color: orange"
+                  />
+                  <h3>刪除</h3>
+                </li>
+              </ul>
+            </div>
           </div>
           <div class="content">
-            <p class="post-title">nihao</p>
+            <p class="post-title">{{ datas.post_title }}</p>
             <p>
               {{ datas.post_content }}
             </p>
@@ -51,6 +113,7 @@
         <div class="post-status" :class="{ flex: isFocus }">
           <div>
             <input
+              v-model="postTitle"
               placeholder="今天想分享什麽？"
               :class="{ 'write-note': isFocus }"
               @focus="toggleFocus"
@@ -58,10 +121,15 @@
             <textarea v-show="isFocus" v-model="post" placeholder="寫點什麽吧！"></textarea>
             <div v-show="isFocus" class="btn">
               <button @click.prevent="toggleCancel">取消</button>
-              <button @click.prevent="addPost">新增</button>
+              <button
+                :class="{ 'add-btn': postTitle == '' || post == '' }"
+                @click.prevent="addPost"
+              >
+                新增
+              </button>
             </div>
           </div>
-          <div v-show="!isFocus">
+          <div v-show="!isFocus" @click="toggleShow">
             <Icon icon="ph:note-pencil" width="20" height="20" style="color: orange" />
             <p>我的筆記</p>
           </div>
@@ -86,7 +154,35 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+import NoteListView from '../components/noteListView.vue'
+
+definePageMeta({
+  middleware: 'auth'
+})
+
 const useStore = usedefineStore()
+
+const flavoredNote = computed(() => {
+  return noteLists.value.filter((note) => note.note_like === 1)
+})
+
+const getNoteContent = async (id) => {
+  const res = await $fetch(`/api/notes/${id}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    }
+  })
+  return res
+}
+
+const editNote = async (id) => {
+  const res = await getNoteContent(id)
+  isFocus.value = !isFocus.value
+  toggleShow()
+  postTitle.value = res.note_title
+  post.value = res.note_content
+}
 
 const toggleFocus = () => {
   if (isFocus.value === false) {
@@ -96,9 +192,12 @@ const toggleFocus = () => {
 }
 const toggleCancel = () => {
   isFocus.value = !isFocus.value
+  postTitle.value = ''
+  post.value = ''
 }
 
 const posts = ref([])
+const postTitle = ref('')
 const post = ref('')
 const isFocus = ref(false)
 const data = ref([
@@ -145,13 +244,22 @@ const data = ref([
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
   }
 ])
+const filters = ref('all')
+const noteLists = ref([])
 
 onMounted(() => {
   watchEffect(() => {
     posts.value = useStore.allPosts
-    console.log(posts.value)
+    noteLists.value = useStore.noteList
+    console.log(noteLists.value)
   })
 })
+
+const isShow = ref(false)
+
+const toggleShow = () => {
+  isShow.value = !isShow.value
+}
 
 const likePost = async (id, postLikable) => {
   const computePostLike = () => {
@@ -178,6 +286,17 @@ const likePost = async (id, postLikable) => {
   console.log(postLike)
 }
 
+const deleteNote = async (id) => {
+  const res = await $fetch(`/api/posts/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    }
+  })
+  useStore.getAllPost()
+  console.log(res)
+}
+
 const addPost = async () => {
   if (post.content !== '') {
     const res = await $fetch('/api/posts', {
@@ -186,6 +305,7 @@ const addPost = async () => {
         Authorization: `Bearer ${useStore.userInfo.access_token}`
       },
       body: {
+        post_title: postTitle.value,
         post_content: post.value
       }
     })
@@ -193,11 +313,87 @@ const addPost = async () => {
     useStore.getAllPost()
     console.log(res)
   }
-  post.content = ''
+  postTitle.value = ''
+  post.value = ''
 }
 </script>
 
 <style lang="scss" scoped>
+.popup-box {
+  position: fixed;
+  top: 0;
+  right: -50;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  transition: all 0.3s ease;
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  background-color: #d9d9d9c7;
+}
+
+.popup {
+  width: 85%;
+  height: 90%;
+  background-color: #fbfbfb;
+  padding: 20px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  box-shadow: 0px 12px 32px 0px #00000012;
+  margin: auto;
+  color: #5c5c5c;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.popup::-webkit-scrollbar {
+  display: none;
+}
+.popup-title {
+  height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  margin-bottom: 10px;
+  a {
+    list-style: none;
+    text-decoration: none;
+  }
+  div {
+    display: flex;
+    align-items: center;
+  }
+  p {
+    font-size: 24px;
+    color: black;
+  }
+  ul {
+    display: flex;
+    list-style: none;
+    width: 256px;
+    border-radius: 4px;
+    border: 1px solid #f75c5c;
+    li:first-child {
+    }
+    li {
+      text-align: center;
+      line-height: 40px;
+      width: 128px;
+    }
+  }
+}
+.seleted-btn {
+  text-align: center;
+  line-height: 40px;
+  width: 128px;
+  border-radius: 4px;
+  border: 1px solid #f75c5c;
+  color: white;
+  background-color: #f75c5c;
+}
+
 .user-profile {
   display: block;
   width: 40px;
@@ -214,8 +410,37 @@ const addPost = async () => {
 }
 .profile {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  div:first-child {
+    display: flex;
+    align-items: center;
+  }
 }
+.icons:hover .delete-note {
+  display: flex;
+}
+
+.icon {
+  cursor: pointer;
+  position: relative;
+}
+
+.delete-note {
+  position: absolute;
+  display: none;
+  padding: 0px 10px;
+  cursor: pointer;
+  li {
+    display: flex;
+    width: 80px;
+    height: 40px;
+    background-color: #f5f5f5;
+    justify-content: space-around;
+    align-items: center;
+  }
+}
+
 .body {
   background-color: #fbfbfb;
 }
@@ -273,7 +498,14 @@ p {
   .btn {
     display: flex;
     justify-content: space-between;
+    .add-btn {
+      background-color: #e1e1e1;
+      color: white;
+      border: none;
+      pointer-events: none;
+    }
   }
+
   button {
     cursor: pointer;
     color: #5c5c5c;
@@ -309,6 +541,8 @@ p {
     align-items: center;
     gap: 10px;
     margin-left: 20px;
+    cursor: pointer;
+
     p {
       color: #ff7512;
     }

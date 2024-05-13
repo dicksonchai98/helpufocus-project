@@ -6,10 +6,7 @@ Providing various api related to books, including book list, specific book infor
   - [Book List API](#book-list-api)
   - [Specific Book Information API](#specific-book-information-api)
   - [Add book API](#add-book-api)
-<<<<<<< HEAD
-=======
   - [Patch book API](#patch-book-api)
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -179,10 +176,7 @@ Add a new book
 | ------------------------- | ---------- | ------------------------- | ----------- |
 | DatabaseOperationError500 | 002        | Database operation error. | 500         |
 | TokenInvalidError401      | 007        | Token invalid error.      | 401         |
-<<<<<<< HEAD
-=======
 | InputDataError400         | 001        | Input data error.         | 400         |
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -209,8 +203,6 @@ Add a new book
 ```
 
 <br>
-<<<<<<< HEAD
-=======
 
 ## Patch book API
 Patch a book
@@ -271,4 +263,3 @@ Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 ```
 
 <br>
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64

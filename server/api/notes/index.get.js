@@ -8,11 +8,6 @@ export default defineEventHandler({
       const db = initialFirestore()
       const notes = []
       const booksMap = new Map()
-<<<<<<< HEAD
-      const notesQuerySnapshot = await db
-        .collection('notes')
-        .select('note_book_id', 'note_title', 'note_created_time', 'note_updated_time')
-=======
       const columns = [
         'note_book_id',
         'note_title',
@@ -23,7 +18,6 @@ export default defineEventHandler({
       const notesQuerySnapshot = await db
         .collection('notes')
         .select(...columns)
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
         .where('note_user_id', '==', userData.id)
         .get()
       const booksQuerySnapshot = await db

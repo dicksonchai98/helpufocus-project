@@ -1,13 +1,8 @@
 export default defineNuxtRouteMiddleware((from, to) => {
-  const useStore = usedefineStore()
-
-  const isLogin = useStore.isLogin
+  const isLogin = useCookie('cookie3')
   console.log(isLogin)
-  setTimeout(() => {
-    if (!isLogin) {
-      console.log('hi')
-      console.log(isLogin)
-      return navigateTo('/')
-    }
-  }, 2000)
+  if (!isLogin.value) {
+    alert('麻煩先登!入')
+    return navigateTo('/')
+  }
 })

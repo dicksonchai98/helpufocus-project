@@ -6,12 +6,9 @@ Providing various api related to notes, including note list, specific note infor
   - [Note List API](#note-list-api)
   - [Specific Note Information API](#specific-note-information-api)
   - [Add Note API](#add-note-api)
-<<<<<<< HEAD
-=======
   - [Delete Note API](#delete-note-api)
   - [Patch Note API](#patch-note-api)
   - [Like Note API](#like-note-api)
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
@@ -48,10 +45,7 @@ Get all of notes belong to current user
       "note_book_id": "4HShkzuXdw7LLf8u8Ro8",
       "note_updated_time": 1711410953000,
       "note_created_time": 1711410953000,
-<<<<<<< HEAD
-=======
       "note_like": 1 // 1 => Liked status, 0 => Normal status
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "note_id": "S7MG1dBBh0GM3Z4bs0Ai",
       "note_book_name": "DragonBall"
     },
@@ -60,10 +54,7 @@ Get all of notes belong to current user
       "note_book_id": "4HShkzuXdw7LLf8u8Ro8",
       "note_updated_time": 1711412217000,
       "note_created_time": 1711412217000,
-<<<<<<< HEAD
-=======
       "note_like": 0 // 1 => Liked status, 0 => Normal status
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "note_id": "wr6bubcoTMue9WsSqmrm",
       "note_book_name": "DragonBall"
     }
@@ -128,10 +119,7 @@ Example: /api/notes/4HShkzuXdw7LLf8u8Ro8
   "note_content": "ngoiagegg...",
   "note_user_id": "911pO44hhDsqsSljc9Gp",
   "note_title": "Hahaha",
-<<<<<<< HEAD
-=======
   "note_like": 1 // 1 => Liked status, 0 => Normal status
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
   "note_book_id": "4HShkzuXdw7LLf8u8Ro8",
   "note_updated_time": 1711410953000,
   "note_created_time": 1711410953000,
@@ -207,8 +195,6 @@ Add a new note
 ```
 
 <br>
-<<<<<<< HEAD
-=======
 
 ## Delete Note API
 Delete a note
@@ -389,4 +375,3 @@ Example: /api/notes/like/4HShkzuXdw7LLf8u8Ro8
 ```
 
 <br>
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64

@@ -56,16 +56,18 @@
         <div class="progressbar-content">
           <div class="book-page">
             <p>
-              <Icon icon="typcn:tick" width="25" height="25" style="color: #00a52e" />已經讀了70本書
+              <Icon icon="typcn:tick" width="25" height="25" style="color: #00a52e" />已經讀了{{
+                bookFinished
+              }}本書
             </p>
-            <h1>40<span>%</span></h1>
+            <h1>{{ percentage || 0 }}<span>%</span></h1>
           </div>
           <div class="progress-container">
             <div class="progress">
-              <div :style="{ width: progress + '%' }" class="progress__fill"></div>
-              <span class="progress__text">{{ progress }}%</span>
+              <div :style="{ width: percentage + '%' }" class="progress__fill"></div>
+              <span class="progress__text"></span>
             </div>
-            <p>還剩下24本書</p>
+            <p>還剩下{{ bookLists.length - bookFinished }}本書</p>
           </div>
         </div>
         <div class="book-img"><img src="../../public/graphic3.svg" alt="" /></div>
@@ -75,7 +77,6 @@
           <ul>
             <li>待看書單</li>
             <li>完成書單</li>
-            <li>喜愛書單</li>
           </ul>
           <div class="add-btn">
             <Icon
@@ -113,7 +114,7 @@
           <p>選一本好書吧 🏃🏻‍♀️</p>
         </div>
         <div>
-          <div v-for="note in bookLists.books" :key="note.book_id" class="notebook-list">
+          <div v-for="note in bookLists" :key="note.book_id" class="notebook-list">
             <BookView :note="note" />
           </div>
         </div>
@@ -180,7 +181,17 @@ onMounted(() => {
     bookLists.value = useStore.BookList
   })
 })
+const bookFinished = computed(() => {
+  let completeBook = 0
+  bookLists.value.forEach((book) => {
+    if (book.book_read_page / book.book_total_page === 1) completeBook++
+  })
+  return completeBook
+})
 
+const percentage = computed(() => {
+  return (bookFinished.value / bookLists.value.length) * 100
+})
 const dropContainer = ref(null)
 const fileInput = ref(null)
 

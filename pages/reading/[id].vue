@@ -12,16 +12,21 @@
                     width="25"
                     height="25"
                     style="color: #00a52e"
-                  />我已看了77頁
+                  />我已看了頁{{ books.book_read_page }}
                 </p>
-                <h1>40<span>%</span></h1>
+                <h1><span>%</span></h1>
               </div>
               <div class="progress-container">
                 <div class="progress">
-                  <div :style="{ width: progress + '%' }" class="progress__fill"></div>
-                  <span class="progress__text">{{ progress }}%</span>
+                  <div
+                    :style="{
+                      width: +'%'
+                    }"
+                    class="progress__fill"
+                  ></div>
+                  <span class="progress__text"></span>
                 </div>
-                <p>124 / 240</p>
+                <p></p>
               </div>
             </div>
 
@@ -40,11 +45,13 @@
               <div>
                 <button @click.prevent="toggleShow()">取消</button>
                 <button
+                  v-if="!isEdit"
                   :class="{ btn: data.content == '' || data.title == '' }"
                   @click.prevent="addNotes()"
                 >
                   新增
                 </button>
+                <button v-else @click.prevent="editNotes(updateId)">新增</button>
               </div>
             </form>
           </div>
@@ -54,16 +61,18 @@
         <div class="progressbar-content">
           <div class="book-page">
             <p>
-              <Icon icon="typcn:tick" width="25" height="25" style="color: #00a52e" />已經讀了70本書
+              <Icon icon="typcn:tick" width="25" height="25" style="color: #00a52e" />已經讀了{{
+                bookFinished
+              }}本書
             </p>
-            <h1>40<span>%</span></h1>
+            <h1>{{ percentage || 0 }}<span>%</span></h1>
           </div>
           <div class="progress-container">
             <div class="progress">
-              <div :style="{ width: progress + '%' }" class="progress__fill"></div>
-              <span class="progress__text">{{ progress }}%</span>
+              <div :style="{ width: percentage + '%' }" class="progress__fill"></div>
+              <span class="progress__text"></span>
             </div>
-            <p>還剩下24本書</p>
+            <p>還剩下{{ bookList.length - bookFinished }}本書</p>
           </div>
         </div>
         <div class="book-img"><img src="../../public/graphic3.svg" alt="" /></div>
@@ -142,7 +151,20 @@
           </ul>
         </div>
         <div>
-          <div v-for="notes in book" :key="notes.note_id" class="notebook-list">
+          <div
+            v-for="notes in book"
+            v-show="filters === 'all'"
+            :key="notes.note_id"
+            class="notebook-list"
+          >
+            <NoteView :edit-note="editNote" :notes="notes" />
+          </div>
+          <div
+            v-for="notes in flavoredNote"
+            v-show="filters === 'flavored'"
+            :key="notes.note_id"
+            class="notebook-list"
+          >
             <NoteView :edit-note="editNote" :notes="notes" />
           </div>
         </div>
@@ -161,16 +183,38 @@ const progress = ref(80)
 const { id } = useRoute().params
 const filters = ref('all')
 const noteLists = ref([])
+const bookList = ref([])
+const books = ref([])
 console.log(id)
+
+const bookFinished = computed(() => {
+  let completeBook = 0
+  bookList.value.forEach((book) => {
+    if (book.book_read_page / book.book_total_page === 1) completeBook++
+  })
+  return completeBook
+})
+
+const percentage = computed(() => {
+  return ((bookFinished.value / bookList.value.length) * 100) | '0'
+})
 
 const bookName = computed(() => {
   const foundBook = book.value.find((book) => book.note_book_id === id)
   return foundBook ? foundBook.note_book_name : null
 })
 
+const bookReadPage = () => {
+  books.value = bookList.value.find((book) => book.book_id === id)
+}
+
 const book = computed(() => {
   formattedDates()
   return noteLists.value.filter((n) => n.note_book_id === id)
+})
+
+const flavoredNote = computed(() => {
+  return book.value.filter((note) => note.note_like === 1)
 })
 
 const formattedDates = () => {
@@ -229,9 +273,41 @@ const getNoteContent = async (id) => {
 }
 
 const editNote = async (id) => {
-  isEdit.value = !isEdit.value
   const res = await getNoteContent(id)
   toggleShow(res)
+}
+
+const updatePage = async () => {
+  const res = await $fetch(`/api/books/${id}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    },
+    body: {
+      book_read_page: 15
+    }
+  })
+  useStore.getNoteList()
+  console.log(res)
+}
+
+const editNotes = async (id) => {
+  const res = await $fetch(`/api/notes/${id}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    },
+    body: {
+      note_title: data.title,
+      note_content: data.content
+    }
+  })
+  isShow.value = !isShow.value
+  isEdit.value = !isEdit.value
+
+  useStore.getNoteList()
+
+  console.log(res)
 }
 
 const addNotes = async () => {
@@ -260,34 +336,6 @@ const addNotes = async () => {
   data.content = ''
 }
 
-// const addNote = () => {
-//   if (data.title !== '' && data.content !== '') {
-//     if (!isEdit.value) {
-//       const currentDate = new Date()
-//       // 格式化日期
-//       const options = { month: 'long', day: 'numeric', year: 'numeric' }
-//       data.formattedDate = currentDate.toLocaleDateString('en-US', options)
-//       const newData = { ...data }
-
-//       note.value.push(newData)
-//       isShow.value = !isShow.value
-//     } else {
-//       const currentDate = new Date()
-//       // 格式化日期
-//       const options = { month: 'long', day: 'numeric', year: 'numeric' }
-//       data.formattedDate = currentDate.toLocaleDateString('en-US', options)
-//       const newData = { ...data }
-//       note.value[updateId.value] = newData
-//       isShow.value = !isShow.value
-//       isEdit.value = !isEdit.value
-//     }
-//   }
-//   // 清空 data 中的 title 和 content
-//   data.title = ''
-//   data.content = ''
-//   data.formattedDate = ''
-// }
-
 const isShow = ref(false)
 const toggleShow = (res) => {
   isShow.value = !isShow.value
@@ -295,9 +343,13 @@ const toggleShow = (res) => {
     data.title = res.note_title
     data.content = res.note_content
     updateId.value = res.note_id
+    isEdit.value = !isEdit.value
   } else {
     data.title = ''
     data.content = ''
+    if (isEdit.value) {
+      isEdit.value = !isEdit.value
+    }
   }
 }
 
@@ -329,6 +381,8 @@ const onMouseDown = (event) => {
 onMounted(() => {
   watchEffect(() => {
     noteLists.value = useStore.noteList
+    bookList.value = useStore.BookList
+    bookReadPage()
   })
 })
 </script>

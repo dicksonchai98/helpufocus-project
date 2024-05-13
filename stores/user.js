@@ -50,6 +50,7 @@ export const usedefineStore = defineStore('user', () => {
       await getBookList()
       await getNoteList()
       await getAllPost()
+      await getRank()
       console.log(BookList)
     } catch (error) {
       console.log(error)
@@ -102,6 +103,11 @@ export const usedefineStore = defineStore('user', () => {
   const password = ref('')
   const loginError = ref('')
   const isLogin = ref(false)
+  watch(isLogin, (newValue, oldValue) => {
+    if (!newValue) {
+      logOut()
+    }
+  })
 
   const login = async () => {
     try {
@@ -113,12 +119,15 @@ export const usedefineStore = defineStore('user', () => {
         }
       })
       localStorage.setItem('refreshToken', data.refresh_token)
-      Router.push({ path: '/reading' })
+      username.value = ''
+      password.value = ''
       userInfo.value = data
       isLogin.value = true
-      console.log(user)
+      document.cookie = 'cookie3=value3'
       await getBookList()
       await getNoteList()
+      await getAllPost()
+      Router.push({ path: '/reading' })
     } catch (error) {
       console.log(error)
       loginError.value = error
@@ -151,7 +160,7 @@ export const usedefineStore = defineStore('user', () => {
         Authorization: `Bearer ${userInfo.value.access_token}`
       }
     })
-    BookList.value = res
+    BookList.value = res.books
     return res.books
   }
 
@@ -194,6 +203,7 @@ export const usedefineStore = defineStore('user', () => {
     })
     console.log(res)
     localStorage.removeItem('refreshToken')
+    document.cookie = 'cookie3=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     Router.push({ path: '/' })
     userInfo.value = []
     isLogin.value = false
@@ -237,7 +247,6 @@ export const usedefineStore = defineStore('user', () => {
     signUp,
     isLogin,
     getRank,
-
     userRank
   }
 })

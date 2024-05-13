@@ -1,20 +1,22 @@
 # Posts API Document
+
 Providing various api related to posts, including post list, add note, like post.
+
 # Table of contents
+
 - [Posts API Document](#posts-api-document)
 - [Table of contents](#table-of-contents)
   - [Post List API](#post-list-api)
   - [Add Post API](#add-post-api)
   - [Like Post API](#like-post-api)
-<<<<<<< HEAD
-=======
   - [Delete Post API](#delete-post-api)
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
 
 <br>
 
 ## Post List API
+
 Get all of posts
+
 > Route: /api/posts
 >
 > Method: GET
@@ -30,22 +32,20 @@ Get all of posts
 <br>
 
 **Error Response:**
-| Error Name                | Error Code | Error Message             | Status Code |
+| Error Name | Error Code | Error Message | Status Code |
 | ------------------------- | ---------- | ------------------------- | ----------- |
-| DatabaseOperationError500 | 002        | Database operation error. | 500         |
-| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
+| DatabaseOperationError500 | 002 | Database operation error. | 500 |
+| TokenInvalidError401 | 007 | Token invalid error. | 401 |
 
 <br>
 
 **Successful Response:**
+
 ```json
 {
   "posts": [
     {
-<<<<<<< HEAD
-=======
       "post_title": "herheh"
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "post_content": "hey",
       "post_user_id": "911pO44hhDsqsSljc9Gp",
       "post_created_time": 1711427692000,
@@ -55,10 +55,7 @@ Get all of posts
       "post_id": "G2XCKiVdYV2yX89pP8vq"
     },
     {
-<<<<<<< HEAD
-=======
       "post_title": "gregeg"
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
       "post_content": "nbireonbienbekbnladfkbnqhjtyem",
       "post_likes": 1,
       "post_user_id": "911pO44hhDsqsSljc9Gp",
@@ -74,6 +71,7 @@ Get all of posts
 <br>
 
 **Failed Response:**
+
 ```json
 {
   "statusCode": 401,
@@ -89,7 +87,9 @@ Get all of posts
 <br>
 
 ## Add Post API
+
 Add a new post
+
 > Route: /api/posts
 >
 > Method: POST
@@ -99,32 +99,24 @@ Add a new post
 <br>
 
 **Request Body:**
-<<<<<<< HEAD
-| Name         | Type | Require | Others       |
-| ------------ | ---- | ------- | ------------ |
-| post_content | Text | Y       | Post content |
-=======
-| Name         | Type   | Require | Others       |
+| Name | Type | Require | Others |
 | ------------ | ------ | ------- | ------------ |
-| post_title   | String | Y       | Post title   |
-| post_content | Text   | Y       | Post content |
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
+| post_title | String | Y | Post title |
+| post_content | Text | Y | Post content |
 
 <br>
 
 **Error Response:**
-| Error Name                | Error Code | Error Message             | Status Code |
+| Error Name | Error Code | Error Message | Status Code |
 | ------------------------- | ---------- | ------------------------- | ----------- |
-| DatabaseOperationError500 | 002        | Database operation error. | 500         |
-| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
-<<<<<<< HEAD
-=======
-| InputDataError400         | 001        | Input data error.         | 400         |
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
+| DatabaseOperationError500 | 002 | Database operation error. | 500 |
+| TokenInvalidError401 | 007 | Token invalid error. | 401 |
+| InputDataError400 | 001 | Input data error. | 400 |
 
 <br>
 
 **Successful Response:**
+
 ```json
 {
   "post_id": "G2XCKiVdYV2yX89pP8vq"
@@ -134,6 +126,7 @@ Add a new post
 <br>
 
 **Failed Response:**
+
 ```json
 {
   "statusCode": 401,
@@ -149,7 +142,9 @@ Add a new post
 <br>
 
 ## Like Post API
+
 Like a post
+
 > Route: /api/posts/:id
 >
 > Method: PATCH
@@ -159,34 +154,33 @@ Like a post
 <br>
 
 **URL Parameter:**
-| Name | Type   | Require | Others  |
+| Name | Type | Require | Others |
 | ---- | ------ | ------- | ------- |
-| id   | String | Y       | post id |
+| id | String | Y | post id |
 
 Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 
 <br>
 
 **Request Body:**
-| Name       | Type   | Require | Others                               |
+| Name | Type | Require | Others |
 | ---------- | ------ | ------- | ------------------------------------ |
-| post_likes | Number | Y       | `1` => like <br> `-1` => cancel like |
+| post_likes | Number | Y | `1` => like <br> `-1` => cancel like |
 
 <br>
 
 **Error Response:**
-| Error Name                | Error Code | Error Message             | Status Code |
+| Error Name | Error Code | Error Message | Status Code |
 | ------------------------- | ---------- | ------------------------- | ----------- |
-| DatabaseOperationError500 | 002        | Database operation error. | 500         |
-| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
-| ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
-<<<<<<< HEAD
-=======
-| InputDataError400         | 001        | Input data error.         | 400         |
+| DatabaseOperationError500 | 002 | Database operation error. | 500 |
+| TokenInvalidError401 | 007 | Token invalid error. | 401 |
+| ResourceInvalidError404 | 008 | Resource is invalid. | 404 |
+| InputDataError400 | 001 | Input data error. | 400 |
 
 <br>
 
 **Successful Response:**
+
 ```json
 {
   "result": true
@@ -196,6 +190,7 @@ Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 <br>
 
 **Failed Response:**
+
 ```json
 {
   "statusCode": 401,
@@ -211,7 +206,9 @@ Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 <br>
 
 ## Delete Post API
+
 Delete a post
+
 > Route: /api/posts/:id
 >
 > Method: Delete
@@ -221,9 +218,9 @@ Delete a post
 <br>
 
 **URL Parameter:**
-| Name | Type   | Require | Others  |
+| Name | Type | Require | Others |
 | ---- | ------ | ------- | ------- |
-| id   | String | Y       | post id |
+| id | String | Y | post id |
 
 Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 
@@ -236,16 +233,16 @@ Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 <br>
 
 **Error Response:**
-| Error Name                | Error Code | Error Message             | Status Code |
+| Error Name | Error Code | Error Message | Status Code |
 | ------------------------- | ---------- | ------------------------- | ----------- |
-| DatabaseOperationError500 | 002        | Database operation error. | 500         |
-| TokenInvalidError401      | 007        | Token invalid error.      | 401         |
-| ResourceInvalidError404   | 008        | Resource is invalid.      | 404         |
->>>>>>> b3a99cb2d0a4769b2ead1c85383e8f7a42693f64
+| DatabaseOperationError500 | 002 | Database operation error. | 500 |
+| TokenInvalidError401 | 007 | Token invalid error. | 401 |
+| ResourceInvalidError404 | 008 | Resource is invalid. | 404 |
 
 <br>
 
 **Successful Response:**
+
 ```json
 {
   "result": true
@@ -255,6 +252,7 @@ Example: /api/posts/4HShkzuXdw7LLf8u8Ro8
 <br>
 
 **Failed Response:**
+
 ```json
 {
   "statusCode": 401,

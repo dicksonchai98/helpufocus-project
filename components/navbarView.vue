@@ -6,7 +6,6 @@
           <NuxtLink to="/"><h2 class="title">HELP U FOCUS</h2> </NuxtLink>
         </li>
         <li><NuxtLink to="/reading">閱讀總覽</NuxtLink></li>
-        <li><NuxtLink to="/myPlantView">我的植物</NuxtLink></li>
         <li><NuxtLink to="/rankingView">排名</NuxtLink></li>
         <li><NuxtLink to="/threadsView">社群</NuxtLink></li>
       </ul>
@@ -16,7 +15,7 @@
         ><Icon icon="iconamoon:profile-fill" width="23" height="23" style="color: grey"
       /></span>
       <p>{{ useStore.userInfo.username }}</p>
-      <div class="setting">
+      <div v-show="useStore.isLogin" class="setting">
         <ul>
           <li>
             <NuxtLink to="/changePasswordView"> 修改賬密 </NuxtLink>
