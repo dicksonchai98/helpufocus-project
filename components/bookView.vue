@@ -1,6 +1,6 @@
 <template>
   <div class="note-container">
-    <div class="img-container"><img src="" alt="" /></div>
+    <div class="img-container"><img src="../assets/scss/1401684.png" alt="" /></div>
     <div>
       <h2 class="note-title">{{ note.book_name }}</h2>
       <div class="note-content">
@@ -9,7 +9,9 @@
       <div class="progress-container">
         <div class="progress">
           <div
-            :style="{ width: notes.book_read_page / notes.book_total_page + '%' }"
+            :style="{
+              width: ((note.book_read_page / note.book_total_page) * 100).toFixed(0) + '%'
+            }"
             class="progress__fill"
           ></div>
         </div>
@@ -57,6 +59,11 @@ console.log(notes)
     height: 138px;
     background-color: #00a52e;
     margin: auto;
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
   }
   div:nth-child(2) {
     display: flex;
@@ -93,6 +100,13 @@ console.log(notes)
     margin-right: 10px;
     background-color: #e6e6e6;
     height: 13px;
+  }
+  .progress__fill {
+    width: 10%;
+    height: 100%;
+    background: #00a52e;
+    transition: all 0.2s;
+    border-radius: 32px;
   }
 }
 </style>

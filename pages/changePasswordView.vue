@@ -53,6 +53,8 @@
 </template>
 
 <script setup>
+import Swal from 'sweetalert2'
+
 import { Icon } from '@iconify/vue'
 const Router = useRouter()
 const useStore = usedefineStore()
@@ -66,6 +68,12 @@ const data = reactive({
 const errorMsg = ref(false)
 
 const changePassword = async () => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const ans = confirm('你確定要修改密碼嗎？')
   if (ans) {
     try {
@@ -78,6 +86,21 @@ const changePassword = async () => {
       })
       Router.push({ path: '/' })
       console.log(res)
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer
+          toast.onmouseleave = Swal.resumeTimer
+        }
+      })
+      Toast.fire({
+        icon: 'success',
+        title: '密碼已更新！'
+      })
     } catch (error) {
       console.log(error)
       errorMsg.value = error

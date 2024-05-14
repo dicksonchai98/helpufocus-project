@@ -11,9 +11,7 @@
       </ul>
     </div>
     <div class="user">
-      <span class="user-profile"
-        ><Icon icon="iconamoon:profile-fill" width="23" height="23" style="color: grey"
-      /></span>
+      <img class="user-profile" src="../assets/scss/man.png" alt="" />
       <p>{{ useStore.userInfo.username }}</p>
       <div v-show="useStore.isLogin" class="setting">
         <ul>
@@ -40,7 +38,7 @@ console.log(useStore.isLogin)
 .navbar {
   display: flex;
   position: fixed;
-
+  z-index: 2;
   justify-content: space-between;
   width: 100%;
   background-color: #00b432;
@@ -77,11 +75,8 @@ console.log(useStore.isLogin)
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  border: 1px solid white;
-  background-color: white;
+
   margin-right: 10px;
-  line-height: 38px;
-  padding: 0 2px;
 }
 .user {
   display: flex;

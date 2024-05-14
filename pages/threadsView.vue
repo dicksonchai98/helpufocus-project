@@ -44,7 +44,7 @@
         <div v-for="datas in posts" :key="datas.index" class="post">
           <div class="profile">
             <div>
-              <span class="user-profile"></span>
+              <img class="user-profile" src="../assets/scss/man.png" alt="" />
               <div class="tick">
                 <Icon
                   icon="teenyicons:tick-circle-solid"
@@ -53,7 +53,7 @@
                   style="color: green"
                 />
               </div>
-              <h2>{{ datas.post_user_id }}</h2>
+              <h2>{{ datas.post_username }}</h2>
             </div>
             <div class="icons">
               <Icon
@@ -154,6 +154,7 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+import Swal from 'sweetalert2'
 import NoteListView from '../components/noteListView.vue'
 
 definePageMeta({
@@ -167,6 +168,12 @@ const flavoredNote = computed(() => {
 })
 
 const getNoteContent = async (id) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const res = await $fetch(`/api/notes/${id}`, {
     method: 'GET',
     headers: {
@@ -262,6 +269,13 @@ const toggleShow = () => {
 }
 
 const likePost = async (id, postLikable) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+    console.log('refresh')
+  }
   const computePostLike = () => {
     if (postLikable) {
       return 1
@@ -270,8 +284,7 @@ const likePost = async (id, postLikable) => {
     }
   }
   const postLike = computePostLike()
-
-  console.log(postLike)
+  console.log(tokenExpiredTime, now)
   const res = await $fetch(`/api/posts/${id}`, {
     method: 'PATCH',
     headers: {
@@ -287,6 +300,12 @@ const likePost = async (id, postLikable) => {
 }
 
 const deleteNote = async (id) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const res = await $fetch(`/api/posts/${id}`, {
     method: 'DELETE',
     headers: {
@@ -295,9 +314,30 @@ const deleteNote = async (id) => {
   })
   useStore.getAllPost()
   console.log(res)
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    }
+  })
+  Toast.fire({
+    icon: 'success',
+    title: '已刪除成！'
+  })
 }
 
 const addPost = async () => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   if (post.content !== '') {
     const res = await $fetch('/api/posts', {
       method: 'POST',
@@ -312,6 +352,21 @@ const addPost = async () => {
     isFocus.value = !isFocus.value
     useStore.getAllPost()
     console.log(res)
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer
+        toast.onmouseleave = Swal.resumeTimer
+      }
+    })
+    Toast.fire({
+      icon: 'success',
+      title: '貼文上傳成功！'
+    })
   }
   postTitle.value = ''
   post.value = ''
@@ -399,14 +454,11 @@ const addPost = async () => {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid black;
-  background-color: black;
-  margin-right: 10px;
 }
 .profile .tick {
   position: relative;
   top: 18px;
-  left: -25px;
+  left: -15px;
 }
 .profile {
   display: flex;

@@ -23,7 +23,7 @@
     <div class="notebook-container">
       <div class="notebook-title">
         <ul>
-          <li>全球排名</li>
+          <li class="ranking-global">全球排名</li>
           <li>觀察名單</li>
         </ul>
         <p>已完成</p>
@@ -36,7 +36,7 @@
           >
             <p>{{ index + 1 }}</p>
             <div class="profile">
-              <span class="user-profile"></span>
+              <img src="../assets/scss/man.png" class="user-profile" alt="" />
               <h2>{{ rank.username }}</h2>
               <div class="tick">
                 <Icon
@@ -59,7 +59,7 @@
                   class="progress__fill"
                 ></div>
 
-                <span class="progress__text">80%</span>
+                <span class="progress__text"></span>
               </div>
             </div>
             <div>
@@ -90,7 +90,7 @@ const bookFinished = computed(() => {
 })
 
 const percentage = computed(() => {
-  return (bookFinished.value / bookList.value.length) * 100
+  return ((bookFinished.value / bookList.value.length) * 100).toFixed(0)
 })
 onMounted(() => {
   watchEffect(() => {
@@ -153,8 +153,7 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid black;
-  background-color: black;
+
   margin-right: 10px;
 }
 .profile .tick {
@@ -169,6 +168,10 @@ onMounted(() => {
 }
 
 .notebook-title ul li:hover {
+  border-bottom: 4px solid orange;
+}
+
+.ranking-global {
   border-bottom: 4px solid orange;
 }
 
@@ -226,9 +229,10 @@ onMounted(() => {
 .progress__fill {
   width: 10%;
   height: 100%;
-  background: #ff9f5a;
+  background: #00a52e;
   transition: all 0.2s;
   border-radius: 32px;
+  z-index: 1;
 }
 .progress-container {
   display: flex;
@@ -261,6 +265,9 @@ onMounted(() => {
   justify-content: space-around;
   margin-bottom: 10px;
   padding: 20px 36px 20px 36px;
+  .progress__fill {
+    background: #ff7512;
+  }
 }
 .user {
   background-color: #ffe7d7;

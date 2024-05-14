@@ -18,15 +18,8 @@
               style="color: red"
               width="20"
               height="20"
-              @click="likeNote(notes.note_id, notes.note_like)"
             />
-            <Icon
-              v-else
-              icon="mdi:heart-outline"
-              width="20"
-              height="20"
-              @click="likeNote(notes.note_id, notes.note_like)"
-            />
+            <Icon v-else icon="mdi:heart-outline" width="20" height="20" />
           </div>
         </div>
         <div @click="editNote(notes.note_id)">
@@ -44,6 +37,12 @@ import { Icon } from '@iconify/vue'
 const useStore = usedefineStore()
 
 const likeNote = async (id, noteLikable) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const computeNoteLike = () => {
     if (noteLikable) {
       return 0
@@ -86,17 +85,6 @@ onMounted(() => {
     getNoted()
   })
 })
-
-const deleteNote = async (id) => {
-  const res = await $fetch(`/api/notes/${id}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${useStore.userInfo.access_token}`
-    }
-  })
-  useStore.getNoteList()
-  console.log(res)
-}
 </script>
 
 <style lang="scss" scoped>

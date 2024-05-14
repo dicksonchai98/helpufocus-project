@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-
 export const usedefineStore = defineStore('user', () => {
   const minutes = ref(0)
   const seconds = ref(0)
@@ -58,6 +57,11 @@ export const usedefineStore = defineStore('user', () => {
   })
 
   const getAllPost = async () => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      await refreshApi()
+    }
     const data = await $fetch('/api/posts', {
       method: 'GET',
       headers: {
@@ -70,6 +74,11 @@ export const usedefineStore = defineStore('user', () => {
   }
 
   const getNoteList = async () => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      await refreshApi()
+    }
     const data = await $fetch('/api/notes', {
       method: 'GET',
       headers: {
@@ -89,6 +98,9 @@ export const usedefineStore = defineStore('user', () => {
           refresh_token: api
         })
       })
+      const tokenExpiredTime = data.expire_at * 1000
+      console.log(tokenExpiredTime)
+      localStorage.setItem('tokenExpiredTime', tokenExpiredTime)
       userInfo.value = data
       isLogin.value = true
 
@@ -103,11 +115,14 @@ export const usedefineStore = defineStore('user', () => {
   const password = ref('')
   const loginError = ref('')
   const isLogin = ref(false)
-  watch(isLogin, (newValue, oldValue) => {
-    if (!newValue) {
-      logOut()
+  watch(
+    () => isLogin,
+    (newValue, oldValue) => {
+      if (!newValue) {
+        logOut()
+      }
     }
-  })
+  )
 
   const login = async () => {
     try {
@@ -118,6 +133,8 @@ export const usedefineStore = defineStore('user', () => {
           password: password.value
         }
       })
+      const tokenExpiredTime = data.expire_at * 1000
+      localStorage.setItem('tokenExpiredTime', tokenExpiredTime)
       localStorage.setItem('refreshToken', data.refresh_token)
       username.value = ''
       password.value = ''
@@ -133,7 +150,6 @@ export const usedefineStore = defineStore('user', () => {
       loginError.value = error
     }
   }
-
   const signUp = async () => {
     try {
       const data = await $fetch('api/auth/signUp', {
@@ -154,6 +170,12 @@ export const usedefineStore = defineStore('user', () => {
   }
 
   const getBookList = async () => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      const refreshToken = localStorage.getItem('refreshToken')
+      await refreshApi(refreshToken)
+    }
     const res = await $fetch('/api/books', {
       method: 'GET',
       headers: {
@@ -165,6 +187,12 @@ export const usedefineStore = defineStore('user', () => {
   }
 
   const getRank = async () => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      const refreshToken = localStorage.getItem('refreshToken')
+      await refreshApi(refreshToken)
+    }
     const res = await $fetch('/api/rank', {
       method: 'GET',
       headers: {
@@ -195,6 +223,12 @@ export const usedefineStore = defineStore('user', () => {
   }
 
   const logOut = async () => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      const refreshToken = localStorage.getItem('refreshToken')
+      await refreshApi(refreshToken)
+    }
     const res = await $fetch('/api/auth/logout', {
       method: 'GET',
       headers: {

@@ -75,8 +75,18 @@
       <div class="notebook-container">
         <div class="notebook-title">
           <ul>
-            <li>待看書單</li>
-            <li>完成書單</li>
+            <li
+              :class="{ bookList: bookList === 'uncompletedList' }"
+              @click="bookList = 'uncompletedList'"
+            >
+              待看書單
+            </li>
+            <li
+              :class="{ bookList: bookList === 'completedList' }"
+              @click="bookList = 'completedList'"
+            >
+              完成書單
+            </li>
           </ul>
           <div class="add-btn">
             <Icon
@@ -113,8 +123,13 @@
           <Icon icon="mingcute:right-fill" width="30" height="30" style="color: #cbcbcb" />
           <p>選一本好書吧 🏃🏻‍♀️</p>
         </div>
-        <div>
-          <div v-for="note in bookLists" :key="note.book_id" class="notebook-list">
+        <div v-if="bookList === 'uncompletedList'">
+          <div v-for="note in uncompletedBookList" :key="note.book_id" class="notebook-list">
+            <BookView :note="note" />
+          </div>
+        </div>
+        <div v-else>
+          <div v-for="note in completedBookList" :key="note.book_id" class="notebook-list">
             <BookView :note="note" />
           </div>
         </div>
@@ -125,12 +140,14 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+import Swal from 'sweetalert2'
+
 import BookView from '../../components/bookView.vue'
 definePageMeta({
   middleware: 'auth'
 })
 const useStore = usedefineStore()
-
+const bookList = ref('uncompletedList')
 const progress = computed((a, b) => {
   return a / b
 })
@@ -176,6 +193,13 @@ const onMouseDown = (event) => {
 
 const bookLists = ref([])
 
+const uncompletedBookList = computed(() => {
+  return bookLists.value.filter((n) => n.book_read_page / n.book_total_page !== 1)
+})
+const completedBookList = computed(() => {
+  return bookLists.value.filter((n) => n.book_read_page / n.book_total_page === 1)
+})
+console.log(uncompletedBookList.value)
 onMounted(() => {
   watchEffect(() => {
     bookLists.value = useStore.BookList
@@ -190,7 +214,7 @@ const bookFinished = computed(() => {
 })
 
 const percentage = computed(() => {
-  return (bookFinished.value / bookLists.value.length) * 100
+  return ((bookFinished.value / bookLists.value.length) * 100).toFixed(0)
 })
 const dropContainer = ref(null)
 const fileInput = ref(null)
@@ -240,6 +264,21 @@ const addBooks = async () => {
     book.title = ''
     book.page = ''
     book.file = null
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer
+        toast.onmouseleave = Swal.resumeTimer
+      }
+    })
+    Toast.fire({
+      icon: 'success',
+      title: '書單已更新！'
+    })
     return res
   } catch (error) {
     console.log(error)
@@ -309,6 +348,10 @@ const addBooks = async () => {
 }
 
 .notebook-title ul li:hover {
+  border-bottom: 4px solid orange;
+}
+
+.bookList {
   border-bottom: 4px solid orange;
 }
 
@@ -391,8 +434,8 @@ const addBooks = async () => {
   .progress {
     position: relative;
     width: 70%;
-    height: 20px;
-    background: #9cbab4;
+    height: 40px;
+    background: #ffffff;
     border-radius: 32px;
     overflow: hidden;
     display: flex;
@@ -641,7 +684,7 @@ const addBooks = async () => {
   position: relative;
   width: 567px;
   height: 20px;
-  background: #9cbab4;
+  background: #fbfbfb;
   border-radius: 32px;
   overflow: hidden;
   display: flex;

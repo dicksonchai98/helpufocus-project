@@ -48,10 +48,17 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+import Swal from 'sweetalert2'
 
 const useStore = usedefineStore()
 
 const likeNote = async (id, noteLikable) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const computeNoteLike = () => {
     if (noteLikable) {
       return 0
@@ -105,6 +112,12 @@ watch(
 )
 
 const deleteNote = async (id) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const res = await $fetch(`/api/notes/${id}`, {
     method: 'DELETE',
     headers: {
@@ -113,6 +126,21 @@ const deleteNote = async (id) => {
   })
   useStore.getNoteList()
   console.log(res)
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    }
+  })
+  Toast.fire({
+    icon: 'success',
+    title: '已刪除成功！'
+  })
 }
 </script>
 

@@ -14,19 +14,22 @@
                     style="color: #00a52e"
                   />我已看了頁{{ books.book_read_page }}
                 </p>
-                <h1><span>%</span></h1>
+                <h1>
+                  {{ ((books.book_read_page / books.book_total_page) * 100).toFixed(0)
+                  }}<span>%</span>
+                </h1>
               </div>
               <div class="progress-container">
                 <div class="progress">
                   <div
                     :style="{
-                      width: +'%'
+                      width: ((books.book_read_page / books.book_total_page) * 100).toFixed(0) + '%'
                     }"
                     class="progress__fill"
                   ></div>
                   <span class="progress__text"></span>
                 </div>
-                <p></p>
+                <p>{{ books.book_read_page }}/{{ books.book_total_page }}</p>
               </div>
             </div>
 
@@ -82,7 +85,6 @@
           <ul>
             <li>待看書單</li>
             <li>完成書單</li>
-            <li>喜愛書單</li>
           </ul>
           <div class="add-btn">
             <Icon
@@ -98,17 +100,14 @@
                 <Icon icon="ph:note-pencil" width="20" height="20" style="color: orange" />
                 <h3>新增筆記</h3>
               </li>
-              <li>
-                <Icon icon="bytesize:book" width="20" height="20" style="color: orange" />
-                <h3>新增書單</h3>
-              </li>
+
               <li @click="useStore.toggleTimers()">
                 <Icon icon="ph:clock-light" width="20" height="20" style="color: orange" />
-                <h3>計時器</h3>
+                <h3>更新頁面</h3>
               </li>
             </ul>
           </div>
-          <TimerView v-show="useStore.isShow" />
+          <UpdatePageView v-show="useStore.isShow" :id="id" :books="books" />
 
           <div v-show="useStore.isTimerRunning" ref="wrapper" class="timer">
             <div v-show="useStore.isTimerStop" class="timers">
@@ -175,7 +174,8 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
-import TimerView from '../components/timersView.vue'
+import Swal from 'sweetalert2'
+import UpdatePageView from '../components/updatePageView.vue'
 import NoteView from '../components/noteView.vue'
 
 const useStore = usedefineStore()
@@ -196,16 +196,19 @@ const bookFinished = computed(() => {
 })
 
 const percentage = computed(() => {
-  return ((bookFinished.value / bookList.value.length) * 100) | '0'
+  return ((bookFinished.value / bookList.value.length) * 100).toFixed(0) | '0'
 })
 
 const bookName = computed(() => {
-  const foundBook = book.value.find((book) => book.note_book_id === id)
-  return foundBook ? foundBook.note_book_name : null
+  const foundBook = bookList.value.find((book) => book.book_id === id)
+  return foundBook ? foundBook.book_name : null
 })
 
 const bookReadPage = () => {
-  books.value = bookList.value.find((book) => book.book_id === id)
+  const foundBook = bookList.value.find((book) => book.book_id === id)
+  if (foundBook) {
+    books.value = foundBook
+  }
 }
 
 const book = computed(() => {
@@ -263,6 +266,12 @@ const isEdit = ref(false)
 const updateId = ref(0)
 
 const getNoteContent = async (id) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const res = await $fetch(`/api/notes/${id}`, {
     method: 'GET',
     headers: {
@@ -277,21 +286,13 @@ const editNote = async (id) => {
   toggleShow(res)
 }
 
-const updatePage = async () => {
-  const res = await $fetch(`/api/books/${id}`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${useStore.userInfo.access_token}`
-    },
-    body: {
-      book_read_page: 15
-    }
-  })
-  useStore.getNoteList()
-  console.log(res)
-}
-
 const editNotes = async (id) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   const res = await $fetch(`/api/notes/${id}`, {
     method: 'PATCH',
     headers: {
@@ -304,13 +305,32 @@ const editNotes = async (id) => {
   })
   isShow.value = !isShow.value
   isEdit.value = !isEdit.value
-
   useStore.getNoteList()
-
   console.log(res)
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    }
+  })
+  Toast.fire({
+    icon: 'success',
+    title: '筆記已更新！'
+  })
 }
 
 const addNotes = async () => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+  }
   if (data.title !== '' && data.content !== '') {
     if (!isEdit.value) {
       const res = await $fetch('/api/notes', {
@@ -327,6 +347,21 @@ const addNotes = async () => {
       isShow.value = !isShow.value
       useStore.getNoteList()
       console.log(res)
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer
+          toast.onmouseleave = Swal.resumeTimer
+        }
+      })
+      Toast.fire({
+        icon: 'success',
+        title: '筆記已更新！'
+      })
     } else {
       isShow.value = !isShow.value
       isEdit.value = !isEdit.value
@@ -463,6 +498,12 @@ onMounted(() => {
   height: 43px;
   width: 100%;
   align-items: center;
+  ul:first-child {
+    pointer-events: none;
+    li {
+      color: #9a9a9a;
+    }
+  }
   ul {
     text-decoration: none;
     list-style: none;
@@ -493,9 +534,10 @@ onMounted(() => {
 }
 .add-btn ul {
   width: 200px;
-  height: 200px;
+  height: 150px;
   background-color: white;
   position: absolute;
+  top: 312px;
   right: 160px;
   padding: 16px 20px 16px 20px;
   border-radius: 8px;
@@ -567,7 +609,7 @@ onMounted(() => {
     position: relative;
     width: 70%;
     height: 20px;
-    background: #9cbab4;
+    background: #fbfbfb;
     border-radius: 32px;
     overflow: hidden;
     display: flex;
@@ -762,7 +804,7 @@ onMounted(() => {
   position: relative;
   width: 567px;
   height: 20px;
-  background: #9cbab4;
+  background: #fbfbfb;
   border-radius: 32px;
   overflow: hidden;
   display: flex;
