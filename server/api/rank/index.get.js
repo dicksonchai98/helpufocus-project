@@ -2,13 +2,18 @@ import { DatabaseOperationError500 } from '~/server/errors'
 
 export default defineEventHandler({
   onRequest: [tokenAuthorization()],
-  handler: errorHandler(async () => {
+  handler: errorHandler(async (event) => {
     try {
+      const { userData } = event.context
+      const { id: userId } = userData
+      const query = getQuery(event)
+      const { type = 'all' } = query
       const db = initialFirestore()
       const usersQuerySnapshot = await db.collection('users').get()
       const booksQuerySnapshot = await db.collection('books').get()
       const userBookMap = new Map()
       const userArray = []
+      let follows = []
 
       booksQuerySnapshot.forEach((snapshot) => {
         const data = snapshot.data()
@@ -26,9 +31,19 @@ export default defineEventHandler({
         }
       })
 
+      if (type === 'follow') {
+        const followsRef = await db.collection('follows').doc(userId).get()
+        const data = followsRef.data()
+        follows = data.follows
+      }
+
       usersQuerySnapshot.forEach((snapshot) => {
         const data = snapshot.data()
         const id = snapshot.id
+        if (type === 'follow') {
+          const followOrNot = follows.includes(id)
+          if (!followOrNot && id !== userId) return
+        }
         const [finished, total] = userBookMap.get(id) || [0, 0]
         const userData = {
           user_id: id,
