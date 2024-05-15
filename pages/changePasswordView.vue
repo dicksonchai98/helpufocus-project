@@ -54,19 +54,16 @@
 
 <script setup>
 import Swal from 'sweetalert2'
-
 import { Icon } from '@iconify/vue'
 const Router = useRouter()
 const useStore = usedefineStore()
-
 const data = reactive({
   current_password: '',
   new_password: '',
   confirm_password: ''
 })
-
 const errorMsg = ref(false)
-
+// 修改密碼
 const changePassword = async () => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()

@@ -1,29 +1,20 @@
-# Rank API Document
-Providing various api related to rank.
+# Collections API Document
+Providing various api related to collections of post.
 # Table of contents
-- [Rank API Document](#rank-api-document)
+- [Collections API Document](#collections-api-document)
 - [Table of contents](#table-of-contents)
-  - [Get rank API](#get-rank-api)
-  - [Follow user API](#follow-user-api)
+  - [Get collections API](#get-collections-api)
+  - [Collect post API](#collect-post-api)
 
 <br>
 
-## Get rank API
-Get rank information
-> Route: /api/rank
+## Get collections API
+Get the user's collected posts
+> Route: /api/collections
 >
 > Method: GET
 >
 > Token Authentication: Yes, Bearer token authentication
-
-<br>
-
-**Request Query**
-| Name | Type   | Others                                                                               |
-| ---- | ------ | ------------------------------------------------------------------------------------ |
-| type | String | Indicate which type of data wants to query('all', 'follow'), 'all' is default value. |
-
-Example: /api/rank?type=follow
 
 <br>
 
@@ -44,23 +35,13 @@ Example: /api/rank?type=follow
 **Successful Response:**
 ```json
 {
-  "rank": [
+  "collection_posts": [
     {
-      "user_id": "911pO44hhDsqsSljc9Gp",
-      "username": "hank",
-      "books_finished": 1,
-      "books_total": 2
-    },
-    {
-      "user_id": "U866ul20t5JdqYN9t5w4",
-      "books_finished": 0,
-      "books_total": 5
-    },
-    {
-      "user_id": "dlhTNH4CyR8VNbnjMyLG",
-      "username": "Dickson",
-      "books_finished": 0,
-      "books_total": 1
+      "post_title": "HAHA",
+      "post_content": "hey",
+      "post_user_id": "911pO44hhDsqsSljc9Gp",
+      "post_created_time": 1714457193000,
+      "post_id": "CCmadXVb87OBcKhQ1OUL"
     }
   ]
 }
@@ -83,9 +64,9 @@ Example: /api/rank?type=follow
 
 <br>
 
-## Follow user API
-Providing an API for user to follow another user and we can see the presentation at follow rank page.
-> Route: /api/rank/follow
+## Collect post API
+Providing an API for users to collect post.
+> Route: /api/collections
 >
 > Method: POST
 >
@@ -94,10 +75,10 @@ Providing an API for user to follow another user and we can see the presentation
 <br>
 
 **Request Body:**
-| Name           | Type   | Require | Others                                                   |
-| -------------- | ------ | ------- | -------------------------------------------------------- |
-| follow_user_id | String | Y       | Indicate which user wants to follow by providing user id |
-| follow_or_not  | Number | Y       | 1 => follow, 0 => unfollow                               |
+| Name               | Type   | Require | Others                                                    |
+| ------------------ | ------ | ------- | --------------------------------------------------------- |
+| collection_post_id | String | Y       | Indicate which post wants to collect by providing post id |
+| collection_or_not  | Number | Y       | 1 => collected, 0 => uncollected                          |
 
 <br>
 

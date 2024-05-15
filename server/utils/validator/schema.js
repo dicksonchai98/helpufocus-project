@@ -94,3 +94,13 @@ export const addPostSchema = Joi.object({
 export const patchPostSchema = Joi.object({
   post_likes: Joi.number().valid(1, -1).required()
 }).required()
+
+export const postFollowSchema = Joi.object({
+  follow_user_id: Joi.string().required(),
+  follow_or_not: Joi.number().valid(1, 0).required()
+}).required()
+
+export const postCollectionSchema = Joi.object({
+  collection_post_id: Joi.string().required(),
+  collection_or_not: Joi.number().valid(1, 0).required()
+}).required()

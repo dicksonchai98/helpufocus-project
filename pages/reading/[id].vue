@@ -7,12 +7,9 @@
             <div class="progressbar-content">
               <div class="book-page">
                 <p>
-                  <Icon
-                    icon="typcn:tick"
-                    width="25"
-                    height="25"
-                    style="color: #00a52e"
-                  />我已看了頁{{ books.book_read_page }}
+                  <Icon icon="typcn:tick" width="25" height="25" style="color: #00a52e" />我已看了{{
+                    books.book_read_page
+                  }}頁
                 </p>
                 <h1>
                   {{ ((books.book_read_page / books.book_total_page) * 100).toFixed(0)
@@ -101,7 +98,13 @@
                 <h3>新增筆記</h3>
               </li>
 
-              <li @click="useStore.toggleTimers()">
+              <li
+                :class="{
+                  'no-icon':
+                    ((books.book_read_page / books.book_total_page) * 100).toFixed(0) === '100'
+                }"
+                @click="useStore.toggleTimers()"
+              >
                 <Icon icon="ph:clock-light" width="20" height="20" style="color: orange" />
                 <h3>更新頁面</h3>
               </li>
@@ -177,16 +180,13 @@ import { Icon } from '@iconify/vue'
 import Swal from 'sweetalert2'
 import UpdatePageView from '../components/updatePageView.vue'
 import NoteView from '../components/noteView.vue'
-
 const useStore = usedefineStore()
-const progress = ref(80)
 const { id } = useRoute().params
 const filters = ref('all')
 const noteLists = ref([])
 const bookList = ref([])
 const books = ref([])
-console.log(id)
-
+// 取得完成書單數量
 const bookFinished = computed(() => {
   let completeBook = 0
   bookList.value.forEach((book) => {
@@ -194,32 +194,32 @@ const bookFinished = computed(() => {
   })
   return completeBook
 })
-
+// 完成書單百分比
 const percentage = computed(() => {
   return ((bookFinished.value / bookList.value.length) * 100).toFixed(0) | '0'
 })
-
+// 取得書名
 const bookName = computed(() => {
   const foundBook = bookList.value.find((book) => book.book_id === id)
   return foundBook ? foundBook.book_name : null
 })
-
+// 取得該書單頁數及完成頁數
 const bookReadPage = () => {
   const foundBook = bookList.value.find((book) => book.book_id === id)
   if (foundBook) {
     books.value = foundBook
   }
 }
-
+// 取得該筆記的書本
 const book = computed(() => {
   formattedDates()
   return noteLists.value.filter((n) => n.note_book_id === id)
 })
-
+// 喜愛筆記
 const flavoredNote = computed(() => {
   return book.value.filter((note) => note.note_like === 1)
 })
-
+// 日期轉換
 const formattedDates = () => {
   noteLists.value.forEach(function (item) {
     // 将日期字符串转换为 Date 对象
@@ -239,32 +239,7 @@ const formattedDates = () => {
   })
 }
 
-const test = () => {
-  console.log(useStore.noteList)
-}
-const note = ref([
-  {
-    title: '書本',
-    content:
-      '書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容',
-    formattedDate: new Date()
-  },
-  {
-    title: '書本',
-    content:
-      '書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容書本内容',
-    formattedDate: new Date()
-  }
-])
-
-const data = reactive({
-  title: '',
-  content: ''
-})
-
-const isEdit = ref(false)
-const updateId = ref(0)
-
+// 取得筆記
 const getNoteContent = async (id) => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -280,12 +255,33 @@ const getNoteContent = async (id) => {
   })
   return res
 }
-
+// 編輯筆記
+const data = reactive({
+  title: '',
+  content: ''
+})
+const isEdit = ref(false)
+const updateId = ref(0)
 const editNote = async (id) => {
   const res = await getNoteContent(id)
   toggleShow(res)
 }
-
+const isShow = ref(false)
+const toggleShow = (res) => {
+  isShow.value = !isShow.value
+  if (res) {
+    data.title = res.note_title
+    data.content = res.note_content
+    updateId.value = res.note_id
+    isEdit.value = !isEdit.value
+  } else {
+    data.title = ''
+    data.content = ''
+    if (isEdit.value) {
+      isEdit.value = !isEdit.value
+    }
+  }
+}
 const editNotes = async (id) => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -323,7 +319,7 @@ const editNotes = async (id) => {
     title: '筆記已更新！'
   })
 }
-
+// 上傳筆記
 const addNotes = async () => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -369,48 +365,6 @@ const addNotes = async () => {
   }
   data.title = ''
   data.content = ''
-}
-
-const isShow = ref(false)
-const toggleShow = (res) => {
-  isShow.value = !isShow.value
-  if (res) {
-    data.title = res.note_title
-    data.content = res.note_content
-    updateId.value = res.note_id
-    isEdit.value = !isEdit.value
-  } else {
-    data.title = ''
-    data.content = ''
-    if (isEdit.value) {
-      isEdit.value = !isEdit.value
-    }
-  }
-}
-
-const wrapper = ref(null)
-
-const onMouseDown = (event) => {
-  const initialLeft = wrapper.value.offsetLeft
-  const initialTop = wrapper.value.offsetTop
-  const initialX = event.clientX
-  const initialY = event.clientY
-
-  const onMouseMove = (e) => {
-    const movementX = e.clientX - initialX
-    const movementY = e.clientY - initialY
-
-    wrapper.value.style.left = `${initialLeft + movementX}px`
-    wrapper.value.style.top = `${initialTop + movementY}px`
-  }
-
-  const onMouseUp = () => {
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
-
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
 }
 
 onMounted(() => {
@@ -523,6 +477,9 @@ onMounted(() => {
   .icon {
     cursor: pointer;
   }
+  .no-icon {
+    pointer-events: none;
+  }
 }
 
 .notebook-title ul li:hover {
@@ -609,7 +566,7 @@ onMounted(() => {
     position: relative;
     width: 70%;
     height: 20px;
-    background: #fbfbfb;
+    background: #e6e6e6;
     border-radius: 32px;
     overflow: hidden;
     display: flex;
@@ -655,6 +612,7 @@ onMounted(() => {
   }
   .text-area {
     height: 307px;
+    text-align: left;
   }
   form {
     img {

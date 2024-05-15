@@ -30,7 +30,6 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 const useStore = usedefineStore()
-
 const props = defineProps(['note'])
 const id = props.note.book_id
 const { notes } = await $fetch(`/api/books/${id}`, {

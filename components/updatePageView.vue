@@ -24,11 +24,8 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 import Swal from 'sweetalert2'
-
 const useStore = usedefineStore()
-
 const prop = defineProps(['id', 'books'])
-
 const updatePage = async () => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -48,6 +45,7 @@ const updatePage = async () => {
   useStore.getNoteList()
   useStore.getBookList()
   useStore.toggleTimers()
+  useStore.getAllRank()
   useStore.getRank()
   page.value = 1
   const Toast = Swal.mixin({
@@ -66,7 +64,7 @@ const updatePage = async () => {
     title: '頁數已更新！'
   })
 }
-
+// 更新頁數
 const page = ref(1)
 const plus = () => {
   if (page.value < prop.books.book_total_page - prop.books.book_read_page) {

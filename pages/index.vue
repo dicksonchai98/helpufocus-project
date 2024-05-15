@@ -50,7 +50,6 @@
               </div>
               <p class="errormsg">{{ useStore.loginError.statusMessage }}</p>
               <button type="submit">登入</button>
-              <p><a href="#">忘記密碼？/ 密碼</a></p>
               <p>還沒有帳號嗎？ 😢<a href="#" @click="toggleLogin"> 立即註冊吧</a></p>
             </form>
           </div>
@@ -96,19 +95,14 @@
 const isLogin = ref(true)
 const page = ref(0)
 const useStore = usedefineStore()
-const test = () => {
-  console.log(useStore.userInfo)
-}
 const user = ref('')
 const toggleLogin = () => {
   isLogin.value = !isLogin.value
 }
-
 const signUps = () => {
   isLogin.value = !isLogin.value
   useStore.signUp()
 }
-
 onMounted(() => {
   watchEffect(() => {
     if (useStore.userInfo) {

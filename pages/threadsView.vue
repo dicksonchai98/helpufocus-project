@@ -34,19 +34,27 @@
             :key="notes.note_id"
             class="notebook-list"
           >
-            <NoteListView :notes="notes" />
+            <NoteListView :edit-note="editNote" :notes="notes" />
           </div>
         </div>
       </div>
     </div>
     <div class="social-container">
       <div class="post-container">
-        <div v-for="datas in posts" :key="datas.index" class="post">
+        <div v-for="(datas, index) in posts" :key="index" class="post">
           <div class="profile">
             <div>
               <img class="user-profile" src="../assets/scss/man.png" alt="" />
-              <div class="tick">
+              <div class="tick" @click="useStore.FollowUser(datas.post_user_id)">
                 <Icon
+                  v-if="!useStore.followingUsers(datas.post_user_id)"
+                  icon="teenyicons:plus-circle-solid"
+                  width="25"
+                  height="25"
+                  style="color: green"
+                />
+                <Icon
+                  v-else
                   icon="teenyicons:tick-circle-solid"
                   width="25"
                   height="25"
@@ -92,7 +100,7 @@
                   width="24"
                   height="24"
                   style="color: grey"
-                  @click="likePost(datas.post_id, datas.post_likable)"
+                  @click="likePost(index, datas.post_id, datas.post_likable)"
                 />
                 <Icon
                   v-else
@@ -100,12 +108,30 @@
                   width="24"
                   height="24"
                   style="color: red"
-                  @click="likePost(datas.post_id, datas.post_likable)"
+                  @click="likePost(index, datas.post_id, datas.post_likable)"
                 />
               </div>
-              <Icon icon="material-symbols:star" width="24" height="24" style="color: #ffd84f" />
+              <Icon
+                v-if="!isFavored(datas.post_id)"
+                icon="mdi:star-outline"
+                width="24"
+                height="24"
+                style="color: #8d8d8d"
+                @click="favorPost(datas.post_id)"
+              />
+              <Icon
+                v-else
+                icon="mdi:star"
+                width="24"
+                height="24"
+                style="color: #ffd84f"
+                @click="favorPost(datas.post_id)"
+              />
             </div>
-            <p>{{ datas.post_likes }}次讚</p>
+            <p v-if="!datas.isLike">{{ datas.post_likes }}次讚</p>
+            <p v-else>
+              <Icon icon="line-md:loading-alt-loop" width="24" height="24" style="color: black" />
+            </p>
           </div>
         </div>
       </div>
@@ -135,15 +161,21 @@
           </div>
         </div>
         <div class="favor-container">
-          <div v-for="datas in data" :key="datas.index" class="favour-content-container">
+          <div v-for="datas in favorPosts" :key="datas.index" class="favour-content-container">
             <div class="favour-content">
               <div class="content">
-                <p class="post-title">{{ datas.title }}</p>
+                <p class="post-title">{{ datas.post_title }}</p>
                 <p>
-                  {{ datas.content }}
+                  {{ datas.post_content }}
                 </p>
               </div>
-              <Icon icon="material-symbols:star" width="24" height="24" style="color: #ffd84f" />
+              <Icon
+                icon="mdi:star"
+                width="24"
+                height="24"
+                style="color: #ffd84f"
+                @click="favorPost(datas.post_id)"
+              />
             </div>
           </div>
         </div>
@@ -156,17 +188,24 @@
 import { Icon } from '@iconify/vue'
 import Swal from 'sweetalert2'
 import NoteListView from '../components/noteListView.vue'
-
+const useStore = usedefineStore()
 definePageMeta({
   middleware: 'auth'
 })
 
-const useStore = usedefineStore()
-
+// 喜愛筆記
 const flavoredNote = computed(() => {
   return noteLists.value.filter((note) => note.note_like === 1)
 })
-
+// 取得筆記内容及編輯
+const isShow = ref(false)
+const posts = ref([])
+const postTitle = ref('')
+const post = ref('')
+const isFocus = ref(false)
+const toggleShow = () => {
+  isShow.value = !isShow.value
+}
 const getNoteContent = async (id) => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -182,7 +221,6 @@ const getNoteContent = async (id) => {
   })
   return res
 }
-
 const editNote = async (id) => {
   const res = await getNoteContent(id)
   isFocus.value = !isFocus.value
@@ -190,7 +228,6 @@ const editNote = async (id) => {
   postTitle.value = res.note_title
   post.value = res.note_content
 }
-
 const toggleFocus = () => {
   if (isFocus.value === false) {
     isFocus.value = !isFocus.value
@@ -203,54 +240,6 @@ const toggleCancel = () => {
   post.value = ''
 }
 
-const posts = ref([])
-const postTitle = ref('')
-const post = ref('')
-const isFocus = ref(false)
-const data = ref([
-  {
-    name: 'chai',
-    title: 'this is title',
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
-  },
-  {
-    name: 'chai',
-    title: 'this is title',
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
-  },
-  {
-    name: 'chai',
-    title: 'this is title',
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
-  },
-  {
-    name: 'chai',
-    title: 'this is title',
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
-  },
-  {
-    name: 'chai',
-    title: 'this is title',
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
-  },
-  {
-    name: 'chai',
-    title: 'this is title',
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
-  },
-  {
-    name: 'chai',
-    title: 'this is title',
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident, autem faceremaxime fugiat expedita, cumque sapiente quo tempora itaque nemo dolore ex culpamaiores necessitatibus veritatis aperiam est quod voluptates?'
-  }
-])
 const filters = ref('all')
 const noteLists = ref([])
 
@@ -258,17 +247,12 @@ onMounted(() => {
   watchEffect(() => {
     posts.value = useStore.allPosts
     noteLists.value = useStore.noteList
-    console.log(noteLists.value)
+    getFavorPost()
   })
 })
 
-const isShow = ref(false)
-
-const toggleShow = () => {
-  isShow.value = !isShow.value
-}
-
-const likePost = async (id, postLikable) => {
+// 點贊貼文
+const likePost = async (index, id, postLikable) => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
   if (now > tokenExpiredTime) {
@@ -284,7 +268,7 @@ const likePost = async (id, postLikable) => {
     }
   }
   const postLike = computePostLike()
-  console.log(tokenExpiredTime, now)
+  posts.value[index].isLike = true
   const res = await $fetch(`/api/posts/${id}`, {
     method: 'PATCH',
     headers: {
@@ -294,11 +278,53 @@ const likePost = async (id, postLikable) => {
       post_likes: postLike
     }
   })
-  useStore.getAllPost()
-  console.log(res)
-  console.log(postLike)
+  await useStore.getAllPost()
+  posts.value[index].isLike = false
 }
+// 選擇喜愛文章
+const favorPost = async (id) => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await useStore.refreshApi(refreshToken)
+    console.log('refresh')
+  }
 
+  const res = await $fetch('/api/collections', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    },
+    body: {
+      collection_post_id: id,
+      collection_or_not: isFavored(id) ? 0 : 1
+    }
+  })
+  getFavorPost()
+}
+// 取得喜愛貼文
+const favorPosts = ref([])
+const getFavorPost = async () => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await refreshApi(refreshToken)
+  }
+  const res = await $fetch('/api/collections', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    }
+  })
+  console.log(res.collection_posts)
+  favorPosts.value = res.collection_posts
+}
+const isFavored = (id) => {
+  return favorPosts.value.some((post) => post.post_id === id)
+}
+// 刪除文章
 const deleteNote = async (id) => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -313,7 +339,6 @@ const deleteNote = async (id) => {
     }
   })
   useStore.getAllPost()
-  console.log(res)
   const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -330,7 +355,7 @@ const deleteNote = async (id) => {
     title: '已刪除成！'
   })
 }
-
+// 上傳文章
 const addPost = async () => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()

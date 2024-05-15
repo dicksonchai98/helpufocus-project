@@ -28,10 +28,6 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 const useStore = usedefineStore()
-const test = () => {
-  console.log(useStore.isLogin)
-}
-console.log(useStore.isLogin)
 </script>
 
 <style lang="scss" scoped>
@@ -87,14 +83,13 @@ console.log(useStore.isLogin)
     color: white;
   }
   .setting {
-    width: 168px;
-    height: 142px;
+    width: 120px;
+    height: 100px;
     background-color: #00a52e;
-    padding: 16px, 20px, 16px, 20px;
+    padding: 16px 20px 16px 20px;
     border-radius: 8px;
     position: absolute;
     top: 60px;
-    right: 85px;
     display: none;
     justify-content: center;
     align-items: center;
@@ -103,10 +98,8 @@ console.log(useStore.isLogin)
       text-decoration: none;
       list-style: none;
       li {
-        height: 53px;
-        font-size: 24px;
         text-align: center;
-        line-height: 53px;
+        line-height: 35px;
       }
     }
   }

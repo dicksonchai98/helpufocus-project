@@ -6,12 +6,7 @@
           <div class="content">
             <form action="#">
               <h2>新增書單</h2>
-              <!-- <div>
-                <label class="file" for="fileInput"
-                  ><Icon icon="wi:cloud-up" width="48" height="48" style="color: black" />Browse to
-                  upload file</label
-                ><input id="fileInput" type="file" />
-              </div> -->
+
               <label id="dropcontainer" for="file" class="drop-container">
                 <Icon
                   v-if="!book.file"
@@ -36,7 +31,13 @@
               </div>
               <div>
                 <label for=""><h2>頁數</h2></label>
-                <input id="book_total_page" v-model="book.page" required name="book_total_page" />
+                <input
+                  id="book_total_page"
+                  v-model="book.page"
+                  type="number"
+                  required
+                  name="book_total_page"
+                />
               </div>
               <div>{{ errorMsg.statusMessage }}</div>
               <div>
@@ -60,7 +61,7 @@
                 bookFinished
               }}本書
             </p>
-            <h1>{{ percentage || 0 }}<span>%</span></h1>
+            <h1>{{ percentage }}<span>%</span></h1>
           </div>
           <div class="progress-container">
             <div class="progress">
@@ -98,26 +99,6 @@
               @click="toggleShow"
             />
           </div>
-
-          <div v-show="useStore.isTimerRunning" ref="wrapper" class="timer">
-            <div v-show="useStore.isTimerStop" class="timers">
-              <img src="../../public/graphic5.svg" alt="" />
-              <div><button>取消</button><button>提交</button></div>
-            </div>
-            <Icon
-              class="header"
-              icon="akar-icons:drag-vertical"
-              style="color: #454545; font-size: 36px"
-              @mousedown="onMouseDown"
-            />
-            <Icon
-              icon="material-symbols:cancel"
-              style="color: green; font-size: 36px"
-              @click="useStore.stopTimer"
-            />
-            <p>計時器</p>
-            <p>{{ useStore.formattedTime }}</p>
-          </div>
         </div>
         <div>
           <Icon icon="mingcute:right-fill" width="30" height="30" style="color: #cbcbcb" />
@@ -141,98 +122,25 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 import Swal from 'sweetalert2'
-
 import BookView from '../../components/bookView.vue'
 definePageMeta({
   middleware: 'auth'
 })
 const useStore = usedefineStore()
-const bookList = ref('uncompletedList')
-const progress = computed((a, b) => {
-  return a / b
-})
-
-const book = reactive({
-  title: '',
-  page: '',
-  file: null
-})
-
-const isShow = ref(false)
-const toggleShow = () => {
-  isShow.value = !isShow.value
-  book.title = ''
-  book.page = ''
-  book.file = null
-}
-
-const wrapper = ref(null)
-
-const onMouseDown = (event) => {
-  const initialLeft = wrapper.value.offsetLeft
-  const initialTop = wrapper.value.offsetTop
-  const initialX = event.clientX
-  const initialY = event.clientY
-
-  const onMouseMove = (e) => {
-    const movementX = e.clientX - initialX
-    const movementY = e.clientY - initialY
-
-    wrapper.value.style.left = `${initialLeft + movementX}px`
-    wrapper.value.style.top = `${initialTop + movementY}px`
-  }
-
-  const onMouseUp = () => {
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
-
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
-
-const bookLists = ref([])
-
-const uncompletedBookList = computed(() => {
-  return bookLists.value.filter((n) => n.book_read_page / n.book_total_page !== 1)
-})
-const completedBookList = computed(() => {
-  return bookLists.value.filter((n) => n.book_read_page / n.book_total_page === 1)
-})
-console.log(uncompletedBookList.value)
-onMounted(() => {
-  watchEffect(() => {
-    bookLists.value = useStore.BookList
-  })
-})
-const bookFinished = computed(() => {
-  let completeBook = 0
-  bookLists.value.forEach((book) => {
-    if (book.book_read_page / book.book_total_page === 1) completeBook++
-  })
-  return completeBook
-})
-
-const percentage = computed(() => {
-  return ((bookFinished.value / bookLists.value.length) * 100).toFixed(0)
-})
+// 上傳file，拖拽
 const dropContainer = ref(null)
 const fileInput = ref(null)
-
 const handleDrop = (event) => {
   event.preventDefault()
   dropContainer.value.classList.remove('drag-active')
   fileInput.value.files = event.dataTransfer.files
 }
-
 const handleDragEnter = () => {
   dropContainer.value.classList.add('drag-active')
 }
-
 const handleDragLeave = () => {
   dropContainer.value.classList.remove('drag-active')
 }
-
 const fileSelected = (event) => {
   const files = event.target.files
   console.log('上传的文件：', files)
@@ -242,9 +150,41 @@ const handleFileChange = (event) => {
   const file = event.target.files[0]
   book.file = file // 将文件信息保存到 formData 中的 avatar 字段
 }
-
+// 新增完成書單
+const bookLists = ref([])
+const isShow = ref(false)
+const wrapper = ref(null)
 const errorMsg = ref('')
-
+const bookList = ref('uncompletedList')
+const book = reactive({
+  title: '',
+  page: '',
+  file: null
+})
+const toggleShow = () => {
+  isShow.value = !isShow.value
+  book.title = ''
+  book.page = ''
+  book.file = null
+}
+const onMouseDown = (event) => {
+  const initialLeft = wrapper.value.offsetLeft
+  const initialTop = wrapper.value.offsetTop
+  const initialX = event.clientX
+  const initialY = event.clientY
+  const onMouseMove = (e) => {
+    const movementX = e.clientX - initialX
+    const movementY = e.clientY - initialY
+    wrapper.value.style.left = `${initialLeft + movementX}px`
+    wrapper.value.style.top = `${initialTop + movementY}px`
+  }
+  const onMouseUp = () => {
+    document.removeEventListener('mousemove', onMouseMove)
+    document.removeEventListener('mouseup', onMouseUp)
+  }
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+}
 const addBooks = async () => {
   try {
     const files = new FormData()
@@ -286,6 +226,33 @@ const addBooks = async () => {
     return error
   }
 }
+// 取出未完成書單
+const uncompletedBookList = computed(() => {
+  return bookLists.value.filter((n) => n.book_read_page / n.book_total_page !== 1)
+})
+// 取出完成書單
+const completedBookList = computed(() => {
+  return bookLists.value.filter((n) => n.book_read_page / n.book_total_page === 1)
+})
+// 去除已完成書本數量
+const bookFinished = computed(() => {
+  let completeBook = 0
+  bookLists.value.forEach((book) => {
+    if (book.book_read_page / book.book_total_page === 1) completeBook++
+  })
+  return completeBook
+})
+// 完成書單百分比
+const percentage = computed(() => {
+  const percentages = ((bookFinished.value / bookLists.value.length) * 100).toFixed(0)
+  return !isNaN(percentages) ? percentages : 0
+})
+
+onMounted(() => {
+  watchEffect(() => {
+    bookLists.value = useStore.BookList
+  })
+})
 </script>
 
 <style lang="scss" scoped>

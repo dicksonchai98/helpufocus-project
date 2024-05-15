@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import Swal from 'sweetalert2'
+
 export const usedefineStore = defineStore('user', () => {
   const minutes = ref(0)
   const seconds = ref(0)
@@ -50,7 +52,7 @@ export const usedefineStore = defineStore('user', () => {
       await getNoteList()
       await getAllPost()
       await getRank()
-      console.log(BookList)
+      await getAllRank()
     } catch (error) {
       console.log(error)
     }
@@ -168,6 +170,47 @@ export const usedefineStore = defineStore('user', () => {
     password.value = ''
     Router.push({ path: '/' })
   }
+  const followingUsers = (id) => {
+    return userRank.value.some((user) => user.user_id === id)
+  }
+  const FollowUser = async (id) => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      const refreshToken = localStorage.getItem('refreshToken')
+      await refreshApi(refreshToken)
+      console.log('refresh')
+    }
+
+    const res = await $fetch('/api/rank/follow', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${userInfo.value.access_token}`
+      },
+      body: {
+        follow_user_id: id,
+        follow_or_not: followingUsers(id) ? 0 : 1
+      }
+    })
+    getRank()
+    console.log(res)
+    console.log('h')
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer
+        toast.onmouseleave = Swal.resumeTimer
+      }
+    })
+    Toast.fire({
+      icon: 'success',
+      title: '已更新關注名單！'
+    })
+  }
 
   const getBookList = async () => {
     const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
@@ -193,14 +236,32 @@ export const usedefineStore = defineStore('user', () => {
       const refreshToken = localStorage.getItem('refreshToken')
       await refreshApi(refreshToken)
     }
-    const res = await $fetch('/api/rank', {
+    const res = await $fetch('/api/rank?type=follow', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${userInfo.value.access_token}`
       }
     })
     console.log(res)
-    userRank.value = res
+    userRank.value = res.rank
+    return res
+  }
+  const allUserRank = ref([])
+  const getAllRank = async () => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      const refreshToken = localStorage.getItem('refreshToken')
+      await refreshApi(refreshToken)
+    }
+    const res = await $fetch('/api/rank?type=all', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userInfo.value.access_token}`
+      }
+    })
+    console.log(res)
+    allUserRank.value = res.rank
     return res
   }
 
@@ -281,6 +342,10 @@ export const usedefineStore = defineStore('user', () => {
     signUp,
     isLogin,
     getRank,
-    userRank
+    userRank,
+    FollowUser,
+    followingUsers,
+    allUserRank,
+    getAllRank
   }
 })

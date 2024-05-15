@@ -49,9 +49,9 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 import Swal from 'sweetalert2'
-
 const useStore = usedefineStore()
-
+const props = defineProps(['notes', 'editNote'])
+const id = props.notes.note_id
 const likeNote = async (id, noteLikable) => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -81,9 +81,6 @@ const likeNote = async (id, noteLikable) => {
 }
 
 const noted = ref([])
-
-const props = defineProps(['notes', 'editNote'])
-const id = props.notes.note_id
 const getNoted = async () => {
   const data = await $fetch(`/api/notes/${id}`, {
     method: 'GET',

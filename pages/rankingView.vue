@@ -8,7 +8,7 @@
               bookFinished
             }}本書
           </p>
-          <h1>{{ percentage || 0 }}<span>%</span></h1>
+          <h1>{{ percentage }}<span>%</span></h1>
         </div>
         <div class="progress-container">
           <div class="progress">
@@ -23,13 +23,20 @@
     <div class="notebook-container">
       <div class="notebook-title">
         <ul>
-          <li class="ranking-global">全球排名</li>
-          <li>觀察名單</li>
+          <li :class="{ 'ranking-global': page === 'allUser' }" @click="page = 'allUser'">
+            全球排名
+          </li>
+          <li
+            :class="{ 'ranking-global': page === 'followingUser' }"
+            @click="page = 'followingUser'"
+          >
+            觀察名單
+          </li>
         </ul>
         <p>已完成</p>
       </div>
-      <div class="ranking-container">
-        <div v-for="(rank, index) in allUserRank.rank" :key="rank.user_id">
+      <div v-if="page === 'allUser'" class="ranking-container">
+        <div v-for="(rank, index) in allUserRank" :key="rank.user_id">
           <div
             class="ranking-content"
             :class="{ user: rank.user_id === useStore.userInfo.user_id }"
@@ -38,7 +45,55 @@
             <div class="profile">
               <img src="../assets/scss/man.png" class="user-profile" alt="" />
               <h2>{{ rank.username }}</h2>
-              <div class="tick">
+              <div class="tick" @click="useStore.FollowUser(rank.user_id)">
+                <Icon
+                  v-if="!useStore.followingUsers(rank.user_id)"
+                  icon="teenyicons:plus-circle-solid"
+                  width="25"
+                  height="25"
+                  style="color: green"
+                />
+                <Icon
+                  v-else
+                  icon="teenyicons:tick-circle-solid"
+                  width="25"
+                  height="25"
+                  style="color: green"
+                />
+              </div>
+            </div>
+            <div class="progress-container">
+              <div class="progress">
+                <div
+                  :style="{
+                    width:
+                      rank.books_total !== 0
+                        ? (rank.books_finished / rank.books_total) * 100 + '%'
+                        : '0%'
+                  }"
+                  class="progress__fill"
+                ></div>
+
+                <span class="progress__text"></span>
+              </div>
+            </div>
+            <div>
+              <p>{{ rank.books_finished + '/' + rank.books_total }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="ranking-container">
+        <div v-for="(rank, index) in userRank" :key="rank.user_id">
+          <div
+            class="ranking-content"
+            :class="{ user: rank.user_id === useStore.userInfo.user_id }"
+          >
+            <p>{{ index + 1 }}</p>
+            <div class="profile">
+              <img src="../assets/scss/man.png" class="user-profile" alt="" />
+              <h2>{{ rank.username }}</h2>
+              <div class="tick" @click="useStore.FollowUser(rank.user_id)">
                 <Icon
                   icon="teenyicons:tick-circle-solid"
                   width="25"
@@ -77,10 +132,12 @@ import { Icon } from '@iconify/vue'
 definePageMeta({
   middleware: 'auth'
 })
+const page = ref('allUser')
 const useStore = usedefineStore()
 const allUserRank = ref([])
+const userRank = ref([])
 const bookList = ref([])
-
+// 完成書單數量
 const bookFinished = computed(() => {
   let completeBook = 0
   bookList.value.forEach((book) => {
@@ -88,16 +145,16 @@ const bookFinished = computed(() => {
   })
   return completeBook
 })
-
+// 完成書單百分比
 const percentage = computed(() => {
-  return ((bookFinished.value / bookList.value.length) * 100).toFixed(0)
+  const percentages = ((bookFinished.value / bookList.value.length) * 100).toFixed(0)
+  return !isNaN(percentages) ? percentages : 0
 })
 onMounted(() => {
   watchEffect(() => {
-    allUserRank.value = useStore.userRank
+    allUserRank.value = useStore.allUserRank
+    userRank.value = useStore.userRank
     bookList.value = useStore.BookList
-    console.log(useStore.userInfo.user_id)
-    console.log(allUserRank.value.rank)
   })
 })
 </script>
@@ -265,8 +322,12 @@ onMounted(() => {
   justify-content: space-around;
   margin-bottom: 10px;
   padding: 20px 36px 20px 36px;
+  margin-top: 10px;
   .progress__fill {
     background: #ff7512;
+  }
+  .progress {
+    background-color: #f4ecec;
   }
 }
 .user {
