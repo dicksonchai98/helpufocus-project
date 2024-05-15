@@ -247,7 +247,7 @@ onMounted(() => {
   watchEffect(() => {
     posts.value = useStore.allPosts
     noteLists.value = useStore.noteList
-    getFavorPost()
+    favorPosts.value = useStore.favorPosts
   })
 })
 
@@ -301,26 +301,9 @@ const favorPost = async (id) => {
       collection_or_not: isFavored(id) ? 0 : 1
     }
   })
-  getFavorPost()
+  useStore.getFavorPost()
 }
-// 取得喜愛貼文
 const favorPosts = ref([])
-const getFavorPost = async () => {
-  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
-  const now = Date.now()
-  if (now > tokenExpiredTime) {
-    const refreshToken = localStorage.getItem('refreshToken')
-    await refreshApi(refreshToken)
-  }
-  const res = await $fetch('/api/collections', {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${useStore.userInfo.access_token}`
-    }
-  })
-  console.log(res.collection_posts)
-  favorPosts.value = res.collection_posts
-}
 const isFavored = (id) => {
   return favorPosts.value.some((post) => post.post_id === id)
 }

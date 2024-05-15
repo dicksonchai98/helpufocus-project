@@ -53,6 +53,7 @@ export const usedefineStore = defineStore('user', () => {
       await getAllPost()
       await getRank()
       await getAllRank()
+      await getFavorPost()
     } catch (error) {
       console.log(error)
     }
@@ -125,6 +126,25 @@ export const usedefineStore = defineStore('user', () => {
       }
     }
   )
+
+  // 取得喜愛貼文
+  const favorPosts = ref([])
+  const getFavorPost = async () => {
+    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+    const now = Date.now()
+    if (now > tokenExpiredTime) {
+      const refreshToken = localStorage.getItem('refreshToken')
+      await refreshApi(refreshToken)
+    }
+    const res = await $fetch('/api/collections', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userInfo.value.access_token}`
+      }
+    })
+    console.log(res.collection_posts)
+    favorPosts.value = res.collection_posts
+  }
 
   const login = async () => {
     try {
@@ -346,6 +366,8 @@ export const usedefineStore = defineStore('user', () => {
     FollowUser,
     followingUsers,
     allUserRank,
-    getAllRank
+    getAllRank,
+    favorPosts,
+    getFavorPost
   }
 })

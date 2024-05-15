@@ -33,40 +33,11 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
-
 const useStore = usedefineStore()
 const props = defineProps(['notes', 'editNote'])
 const id = props.notes.note_id
-const likeNote = async (id, noteLikable) => {
-  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
-  const now = Date.now()
-  if (now > tokenExpiredTime) {
-    const refreshToken = localStorage.getItem('refreshToken')
-    await useStore.refreshApi(refreshToken)
-  }
-  const computeNoteLike = () => {
-    if (noteLikable) {
-      return 0
-    } else {
-      return 1
-    }
-  }
-  const noteLike = computeNoteLike()
-  const res = await $fetch(`/api/notes/like/${id}`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${useStore.userInfo.access_token}`
-    },
-    body: {
-      note_like: noteLike
-    }
-  })
-  useStore.getNoteList()
-  console.log(res)
-}
 
 const noted = ref([])
-
 const getNoted = async () => {
   const data = await $fetch(`/api/notes/${id}`, {
     method: 'GET',
@@ -75,7 +46,6 @@ const getNoted = async () => {
     }
   })
   noted.value = data
-  console.log(noted)
   return data
 }
 
@@ -141,8 +111,9 @@ onMounted(() => {
     }
   }
   .note-content {
-    height: 60px;
+    height: 64px;
     width: 420px;
+    overflow: hidden;
   }
   .progress-container {
     display: flex;

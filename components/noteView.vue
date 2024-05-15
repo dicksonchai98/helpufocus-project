@@ -89,7 +89,6 @@ const getNoted = async () => {
     }
   })
   noted.value = data
-  console.log(noted)
   return data
 }
 

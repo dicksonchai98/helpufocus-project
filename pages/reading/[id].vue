@@ -111,27 +111,6 @@
             </ul>
           </div>
           <UpdatePageView v-show="useStore.isShow" :id="id" :books="books" />
-
-          <div v-show="useStore.isTimerRunning" ref="wrapper" class="timer">
-            <div v-show="useStore.isTimerStop" class="timers">
-              <img src="../../public/graphic5.svg" alt="" />
-              <div><button>取消</button><button>提交</button></div>
-            </div>
-
-            <Icon
-              class="header"
-              icon="akar-icons:drag-vertical"
-              style="color: #454545; font-size: 36px"
-              @mousedown="onMouseDown"
-            />
-            <Icon
-              icon="material-symbols:cancel"
-              style="color: green; font-size: 36px"
-              @click="useStore.stopTimer"
-            />
-            <p>計時器</p>
-            <p>{{ useStore.formattedTime }}</p>
-          </div>
         </div>
         <div>
           <div>
