@@ -158,6 +158,8 @@
 import { Icon } from '@iconify/vue'
 import Swal from 'sweetalert2'
 import UpdatePageView from '../components/updatePageView.vue'
+import NoteListView from '../components/noteListView.vue'
+
 import NoteView from '../components/noteView.vue'
 const useStore = usedefineStore()
 const { id } = useRoute().params

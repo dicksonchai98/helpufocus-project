@@ -5,7 +5,7 @@
         <p>{{ notes.note_updated_time }}</p>
         <h2 class="note-title">{{ notes.note_title }}</h2>
         <div class="note-content">
-          <p>{{ noted.note_content }}</p>
+          <p>{{ note_content }}</p>
         </div>
       </div>
       <div>
@@ -33,26 +33,16 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+
 const useStore = usedefineStore()
 const props = defineProps(['notes', 'editNote'])
 const id = props.notes.note_id
 
-const noted = ref([])
-const getNoted = async () => {
-  const data = await $fetch(`/api/notes/${id}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${useStore.userInfo.access_token}`
-    }
-  })
-  noted.value = data
-  return data
-}
-
-onMounted(() => {
-  watchEffect(() => {
-    getNoted()
-  })
+const { note_content } = await $fetch(`/api/notes/${id}`, {
+  method: 'GET',
+  headers: {
+    Authorization: `Bearer ${useStore.userInfo.access_token}`
+  }
 })
 </script>
 

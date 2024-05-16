@@ -47,8 +47,10 @@ export const usedefineStore = defineStore('user', () => {
   onBeforeMount(async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken')
+      console.log('on-refreshapi')
       await refreshApi(refreshToken)
       await getBookList()
+      console.log('on-getbooklist')
       await getNoteList()
       await getAllPost()
       await getRank()
@@ -108,6 +110,7 @@ export const usedefineStore = defineStore('user', () => {
       isLogin.value = true
 
       console.log(userInfo.value)
+      console.log('refreshapi')
       return data
     } catch (error) {
       console.log(error)
@@ -155,6 +158,7 @@ export const usedefineStore = defineStore('user', () => {
           password: password.value
         }
       })
+      console.log('login')
       const tokenExpiredTime = data.expire_at * 1000
       localStorage.setItem('tokenExpiredTime', tokenExpiredTime)
       localStorage.setItem('refreshToken', data.refresh_token)
@@ -166,6 +170,9 @@ export const usedefineStore = defineStore('user', () => {
       await getBookList()
       await getNoteList()
       await getAllPost()
+      await getFavorPost()
+      await getRank()
+      await getAllRank()
       Router.push({ path: '/reading' })
     } catch (error) {
       console.log(error)
@@ -246,6 +253,7 @@ export const usedefineStore = defineStore('user', () => {
       }
     })
     BookList.value = res.books
+    console.log(res)
     return res.books
   }
 
@@ -264,6 +272,7 @@ export const usedefineStore = defineStore('user', () => {
     })
     console.log(res)
     userRank.value = res.rank
+    console.log('getrank')
     return res
   }
   const allUserRank = ref([])

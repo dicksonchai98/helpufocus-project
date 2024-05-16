@@ -189,6 +189,8 @@ import { Icon } from '@iconify/vue'
 import Swal from 'sweetalert2'
 import NoteListView from '../components/noteListView.vue'
 const useStore = usedefineStore()
+const filters = ref('all')
+const noteLists = ref([])
 definePageMeta({
   middleware: 'auth'
 })
@@ -240,13 +242,11 @@ const toggleCancel = () => {
   post.value = ''
 }
 
-const filters = ref('all')
-const noteLists = ref([])
-
 onMounted(() => {
   watchEffect(() => {
     posts.value = useStore.allPosts
     noteLists.value = useStore.noteList
+    console.log(noteLists)
     favorPosts.value = useStore.favorPosts
   })
 })

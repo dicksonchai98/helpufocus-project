@@ -155,6 +155,7 @@ onMounted(() => {
     allUserRank.value = useStore.allUserRank
     userRank.value = useStore.userRank
     bookList.value = useStore.BookList
+    console.log(userRank.value)
   })
 })
 </script>

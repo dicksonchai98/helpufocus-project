@@ -69,7 +69,6 @@ const page = ref(1)
 const plus = () => {
   if (page.value < prop.books.book_total_page - prop.books.book_read_page) {
     page.value++
-    console.log(prop.books.book_read_page)
   }
 }
 const minus = () => {
