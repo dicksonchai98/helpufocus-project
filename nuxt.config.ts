@@ -1,14 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  nitro: {
-    prerender: {
-      routes: ['/reading/1', '/reading/2', '/rankingView/', '/threadsView/']
-    }
-  },
-  app: {
-    baseURL: process.env.NODE_ENV === 'production' ? '/helpufocus-project/' : '/',
-    buildAssetsDir: '/static/'
-  },
   devtools: { enabled: true },
   plugins: ['~/plugins/spline-viewer.client.ts'],
 
