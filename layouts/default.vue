@@ -4,6 +4,5 @@ import NavbarView from '../components/navbarView.vue'
 
 <template>
   <NavbarView />
-
   <slot />
 </template>
