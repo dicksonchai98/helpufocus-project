@@ -483,12 +483,15 @@ const addPost = async () => {
 
 .icon {
   cursor: pointer;
+}
+.icons {
   position: relative;
 }
-
 .delete-note {
   position: absolute;
   display: none;
+  top: 10px;
+  right: 10px;
   padding: 0px 10px;
   cursor: pointer;
   li {
