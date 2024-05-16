@@ -55,7 +55,7 @@ export default defineNuxtConfig({
       {
         families: {
           Roboto: true,
-          Inter: [400, 700],
+          Inter: [200, 700],
           'Josefin+Sans': true,
           Lato: [100, 300],
           Raleway: {
