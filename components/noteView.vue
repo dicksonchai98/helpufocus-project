@@ -215,7 +215,6 @@ const deleteNote = async (id) => {
   opacity: 0;
   transition: 0.3s ease;
   cursor: pointer;
-  position: relative;
 }
 
 .icons:hover .delete-note {
@@ -226,12 +225,17 @@ const deleteNote = async (id) => {
   opacity: 1;
 }
 
+.icons {
+  position: relative;
+}
+
 .delete-note {
   position: absolute;
-  right: 300px;
   margin-top: 10px;
   display: none;
   padding: 0px 10px;
+  top: 10px;
+  right: 7px;
   cursor: pointer;
   li {
     display: flex;

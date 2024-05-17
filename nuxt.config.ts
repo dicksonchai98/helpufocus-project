@@ -76,7 +76,19 @@ export default defineNuxtConfig({
     dirs: ['./stores']
   },
   runtimeConfig: {
-    firebaseKey: '',
+    firebaseKey: {
+      type: '',
+      projectId: '',
+      privateKeyId: '',
+      privateKey: '',
+      clientEmail: '',
+      clientId: '',
+      authUri: '',
+      tokenUri: '',
+      authProviderX509CertUrl: '',
+      clientX509CertUrl: '',
+      universeDomain: ''
+    },
     accessTokenSecret: '',
     refreshTokenSecret: '',
     firebaseStorage: {
