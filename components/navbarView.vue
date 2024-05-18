@@ -5,13 +5,13 @@
         <li>
           <NuxtLink to="/"><h2 class="title">HELP U FOCUS</h2> </NuxtLink>
         </li>
-        <li><NuxtLink to="/reading">閱讀總覽</NuxtLink></li>
-        <li><NuxtLink to="/rankingView">排名</NuxtLink></li>
-        <li><NuxtLink to="/threadsView">社群</NuxtLink></li>
+        <li><NuxtLink no-prefetch to="/reading">閱讀總覽</NuxtLink></li>
+        <li><NuxtLink no-prefetch to="/rankingView">排名</NuxtLink></li>
+        <li><NuxtLink no-prefetch to="/threadsView">社群</NuxtLink></li>
       </ul>
     </div>
     <div class="user">
-      <img class="user-profile" src="../assets/scss/man.png" alt="" />
+      <img class="user-profile" src="/man.png" alt="" />
       <p>{{ useStore.userInfo.username }}</p>
       <div v-show="useStore.isLogin" class="setting">
         <ul>

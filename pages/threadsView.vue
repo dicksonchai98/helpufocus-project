@@ -26,7 +26,7 @@
             :key="notes.note_id"
             class="notebook-list"
           >
-            <NoteListView :edit-note="editNote" :notes="notes" />
+            <LazyNoteListView :edit-note="editNote" :notes="notes" />
           </div>
           <div
             v-for="notes in flavoredNote"
@@ -34,7 +34,7 @@
             :key="notes.note_id"
             class="notebook-list"
           >
-            <NoteListView :edit-note="editNote" :notes="notes" />
+            <LazyNoteListView :edit-note="editNote" :notes="notes" />
           </div>
         </div>
       </div>
@@ -44,7 +44,7 @@
         <div v-for="(datas, index) in posts" :key="index" class="post">
           <div class="profile">
             <div>
-              <img class="user-profile" src="../assets/scss/man.png" alt="" />
+              <NuxtImg class="user-profile" src="/man.png" alt="" />
               <div class="tick" @click="useStore.FollowUser(datas.post_user_id)">
                 <Icon
                   v-if="!useStore.followingUsers(datas.post_user_id)"
@@ -246,7 +246,6 @@ onMounted(() => {
   watchEffect(() => {
     posts.value = useStore.allPosts
     noteLists.value = useStore.noteList
-    console.log(noteLists)
     favorPosts.value = useStore.favorPosts
   })
 })

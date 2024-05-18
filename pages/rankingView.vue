@@ -43,7 +43,7 @@
           >
             <p>{{ index + 1 }}</p>
             <div class="profile">
-              <img src="../assets/scss/man.png" class="user-profile" alt="" />
+              <NuxtImg src="/man.png" class="user-profile" alt="" />
               <h2>{{ rank.username }}</h2>
               <div class="tick" @click="useStore.FollowUser(rank.user_id)">
                 <Icon
@@ -91,7 +91,7 @@
           >
             <p>{{ index + 1 }}</p>
             <div class="profile">
-              <img src="../assets/scss/man.png" class="user-profile" alt="" />
+              <NuxtImg src="/man.png" class="user-profile" alt="" />
               <h2>{{ rank.username }}</h2>
               <div class="tick" @click="useStore.FollowUser(rank.user_id)">
                 <Icon

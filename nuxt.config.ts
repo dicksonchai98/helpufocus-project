@@ -1,16 +1,42 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
-  plugins: ['~/plugins/spline-viewer.client.ts'],
-
-  // compiler options
-  vue: {
-    compilerOptions: {
-      isCustomElement: (tag) => {
-        return tag === 'spline-viewer'
+  uglify: {
+    uglifyOptions: {
+      comments: false,
+      compress: {
+        drop_console: true
       }
     }
   },
+  build: {
+    splitChunks: {
+      layouts: false,
+      pages: true,
+      commons: true
+    },
+    analyze: true,
+    collapseBooleanAttributes: true,
+    collapseWhitespace: false,
+    decodeEntities: true,
+    minifyCSS: true,
+    minifyJS: true,
+    processConditionalComments: true,
+    removeAttributeQuotes: false,
+    removeComments: false,
+    removeEmptyAttributes: true,
+    removeOptionalTags: false,
+    removeRedundantAttributes: true,
+    removeScriptTypeAttributes: false,
+    removeStyleLinkTypeAttributes: false,
+    removeTagWhitespace: false,
+    sortClassName: false,
+    trimCustomFragments: true,
+    useShortDoctype: true
+  },
+  devtools: { enabled: true },
+
+  // compiler options
+
   css: ['~/assets/scss/styles.scss'],
   //   vite: {
   //     css: {
@@ -54,22 +80,18 @@ export default defineNuxtConfig({
       '@nuxtjs/google-fonts',
       {
         families: {
-          Roboto: true,
-          Inter: [200, 700],
-          'Josefin+Sans': true,
-          Lato: [100, 300],
-          Raleway: {
-            wght: [100, 400],
-            ital: [100]
-          },
-          Inter: '200..700',
-          'Crimson Pro': {
-            wght: '200..900',
-            ital: '200..700'
-          }
-        }
+          Inter: '200..700'
+        },
+        subsets: ['latin'],
+        display: 'swap',
+        prefetch: false,
+        preconnect: true,
+        preload: true,
+        download: true,
+        base64: true
       }
-    ]
+    ],
+    '@nuxt/image'
   ],
 
   imports: {
