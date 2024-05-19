@@ -103,25 +103,6 @@ export const usedefineStore = defineStore('user', () => {
     }
   )
 
-  // 取得喜愛貼文
-  // const favorPosts = ref([])
-  // const getFavorPost = async () => {
-  //   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
-  //   const now = Date.now()
-  //   if (now > tokenExpiredTime) {
-  //     const refreshToken = localStorage.getItem('refreshToken')
-  //     await refreshApi(refreshToken)
-  //   }
-  //   const res = await $fetch('/api/collections', {
-  //     method: 'GET',
-  //     headers: {
-  //       Authorization: `Bearer ${userInfo.value.access_token}`
-  //     }
-  //   })
-  //   console.log(res.collection_posts)
-  //   favorPosts.value = res.collection_posts
-  // }
-
   const login = async () => {
     try {
       const data = await $fetch('api/auth/login', {
@@ -335,7 +316,6 @@ export const usedefineStore = defineStore('user', () => {
     isTimerStop,
     logOut,
     allPosts,
-    // getAllPost,
     signUp,
     isLogin,
     getRank,
@@ -344,7 +324,5 @@ export const usedefineStore = defineStore('user', () => {
     followingUsers,
     allUserRank,
     getAllRank
-    // favorPosts,
-    // getFavorPost
   }
 })
