@@ -47,8 +47,8 @@ export const usedefineStore = defineStore('user', () => {
   onBeforeMount(async () => {
     try {
       await refreshApi()
-      await getBookList()
-      await getNoteList()
+      getBookList()
+      getNoteList()
     } catch (error) {
       console.log(error)
     }
@@ -84,9 +84,6 @@ export const usedefineStore = defineStore('user', () => {
       localStorage.setItem('tokenExpiredTime', tokenExpiredTime)
       userInfo.value = data
       isLogin.value = true
-
-      console.log(userInfo.value)
-      console.log('refreshapi')
       return data
     } catch (error) {
       console.log(error)
@@ -143,9 +140,8 @@ export const usedefineStore = defineStore('user', () => {
       userInfo.value = data
       isLogin.value = true
       document.cookie = 'cookie3=value3'
-      await getBookList()
-      await getNoteList()
-
+      getBookList()
+      getNoteList()
       Router.push({ path: '/reading' })
     } catch (error) {
       console.log(error)
@@ -170,9 +166,11 @@ export const usedefineStore = defineStore('user', () => {
     password.value = ''
     Router.push({ path: '/' })
   }
+
   const followingUsers = (id) => {
     return userRank.value.some((user) => user.user_id === id)
   }
+
   const FollowUser = async (id) => {
     const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
     const now = Date.now()
@@ -181,7 +179,6 @@ export const usedefineStore = defineStore('user', () => {
       await refreshApi(refreshToken)
       console.log('refresh')
     }
-
     const res = await $fetch('/api/rank/follow', {
       method: 'POST',
       headers: {
@@ -193,8 +190,6 @@ export const usedefineStore = defineStore('user', () => {
       }
     })
     getRank()
-    console.log(res)
-    console.log('h')
     const Toast = Swal.mixin({
       toast: true,
       position: 'top-end',

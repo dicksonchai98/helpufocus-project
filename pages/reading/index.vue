@@ -167,26 +167,10 @@ const toggleShow = () => {
   book.page = ''
   book.file = null
 }
-const onMouseDown = (event) => {
-  const initialLeft = wrapper.value.offsetLeft
-  const initialTop = wrapper.value.offsetTop
-  const initialX = event.clientX
-  const initialY = event.clientY
-  const onMouseMove = (e) => {
-    const movementX = e.clientX - initialX
-    const movementY = e.clientY - initialY
-    wrapper.value.style.left = `${initialLeft + movementX}px`
-    wrapper.value.style.top = `${initialTop + movementY}px`
-  }
-  const onMouseUp = () => {
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
+
 const addBooks = async () => {
   try {
+    isShow.value = !isShow.value
     const files = new FormData()
     files.append('file', book.file ? book.file : '')
     files.append('book_name', book.title)
@@ -198,7 +182,6 @@ const addBooks = async () => {
       },
       body: files
     })
-    isShow.value = !isShow.value
     useStore.getBookList()
     console.log(res)
     book.title = ''

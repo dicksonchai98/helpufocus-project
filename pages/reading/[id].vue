@@ -270,6 +270,8 @@ const editNotes = async (id) => {
     const refreshToken = localStorage.getItem('refreshToken')
     await useStore.refreshApi(refreshToken)
   }
+  isShow.value = !isShow.value
+  isEdit.value = !isEdit.value
   const res = await $fetch(`/api/notes/${id}`, {
     method: 'PATCH',
     headers: {
@@ -280,8 +282,7 @@ const editNotes = async (id) => {
       note_content: data.content
     }
   })
-  isShow.value = !isShow.value
-  isEdit.value = !isEdit.value
+
   useStore.getNoteList()
   console.log(res)
   const Toast = Swal.mixin({
@@ -308,6 +309,7 @@ const addNotes = async () => {
     const refreshToken = localStorage.getItem('refreshToken')
     await useStore.refreshApi(refreshToken)
   }
+  isShow.value = !isShow.value
   if (data.title !== '' && data.content !== '') {
     if (!isEdit.value) {
       const res = await $fetch('/api/notes', {
@@ -321,9 +323,7 @@ const addNotes = async () => {
           note_book_id: id
         }
       })
-      isShow.value = !isShow.value
       useStore.getNoteList()
-      console.log(res)
       const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',

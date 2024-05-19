@@ -281,8 +281,6 @@ onMounted(() => {
     if (useStore.userInfo) {
       noteLists.value = useStore.noteList
       getFavorPost()
-      console.log('getall')
-
       getAllPost()
     }
   })
@@ -298,6 +296,7 @@ const likePost = async (index, id, postLikable) => {
     await useStore.refreshApi(refreshToken)
     console.log('refresh')
   }
+  posts.value[index].post_likable = !posts.value[index].post_likable
   const computePostLike = () => {
     if (postLikable) {
       return 1
@@ -316,7 +315,7 @@ const likePost = async (index, id, postLikable) => {
       post_likes: postLike
     }
   })
-  await useStore.getAllPost()
+  await getAllPost()
   posts.value[index].isLike = false
 }
 // 選擇喜愛文章
@@ -339,7 +338,7 @@ const favorPost = async (id) => {
       collection_or_not: isFavored(id) ? 0 : 1
     }
   })
-  useStore.getFavorPost()
+  getFavorPost()
 }
 const favorPosts = ref([])
 const isFavored = (id) => {
@@ -359,7 +358,7 @@ const deleteNote = async (id) => {
       Authorization: `Bearer ${useStore.userInfo.access_token}`
     }
   })
-  useStore.getAllPost()
+  getAllPost()
   const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -384,6 +383,7 @@ const addPost = async () => {
     const refreshToken = localStorage.getItem('refreshToken')
     await useStore.refreshApi(refreshToken)
   }
+  isFocus.value = !isFocus.value
   if (post.content !== '') {
     const res = await $fetch('/api/posts', {
       method: 'POST',
@@ -395,7 +395,6 @@ const addPost = async () => {
         post_content: post.value
       }
     })
-    isFocus.value = !isFocus.value
     getAllPost()
     console.log(res)
     const Toast = Swal.mixin({

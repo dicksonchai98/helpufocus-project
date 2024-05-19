@@ -65,6 +65,7 @@
                   v-model="useStore.username"
                   type="text"
                   name="username"
+                  maxlength="15"
                   placeholder="輸入您的賬號"
                   required
                 />
@@ -76,6 +77,7 @@
                   v-model="useStore.password"
                   type="password"
                   name="password"
+                  minlength="4"
                   placeholder="輸入您的密碼"
                   required
                 />
@@ -95,6 +97,8 @@
 const isLogin = ref(true)
 const page = ref(0)
 const useStore = usedefineStore()
+console.log(useStore.loginError.statusMessage)
+
 const user = ref('')
 const toggleLogin = () => {
   isLogin.value = !isLogin.value
@@ -138,7 +142,7 @@ body .logins {
     text-align: center;
     > div:first-child,
     > div:nth-child(2) {
-      width: 483px;
+      width: 500px;
       height: 270px;
     }
     img:nth-child(2) {
