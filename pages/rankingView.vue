@@ -151,13 +151,23 @@ const percentage = computed(() => {
   return !isNaN(percentages) ? percentages : 0
 })
 onMounted(() => {
-  watchEffect(() => {
-    allUserRank.value = useStore.allUserRank
-    userRank.value = useStore.userRank
-    bookList.value = useStore.BookList
-    console.log(userRank.value)
+  watchEffect(async () => {
+    if (useStore.userInfo.username) {
+      await useStore.getAllRank()
+      await useStore.getRank()
+      userRank.value = useStore.userRank
+      allUserRank.value = useStore.allUserRank
+      bookList.value = useStore.BookList
+    }
   })
 })
+watch(
+  () => useStore.userRank,
+  () => {
+    userRank.value = useStore.userRank
+  },
+  { deep: true }
+)
 </script>
 
 <style lang="scss" scoped>

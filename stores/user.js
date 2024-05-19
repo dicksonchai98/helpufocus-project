@@ -46,37 +46,13 @@ export const usedefineStore = defineStore('user', () => {
 
   onBeforeMount(async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      console.log('on-refreshapi')
-      await refreshApi(refreshToken)
+      await refreshApi()
       await getBookList()
-      console.log('on-getbooklist')
       await getNoteList()
-      await getAllPost()
-      await getRank()
-      await getAllRank()
-      await getFavorPost()
     } catch (error) {
       console.log(error)
     }
   })
-
-  const getAllPost = async () => {
-    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
-    const now = Date.now()
-    if (now > tokenExpiredTime) {
-      await refreshApi()
-    }
-    const data = await $fetch('/api/posts', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${userInfo.value.access_token}`
-      }
-    })
-    allPosts.value = data.posts
-    console.log(allPosts)
-    return data
-  }
 
   const getNoteList = async () => {
     const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
@@ -95,12 +71,12 @@ export const usedefineStore = defineStore('user', () => {
     return data
   }
 
-  async function refreshApi(api) {
+  async function refreshApi() {
     try {
       const data = await $fetch('/api/auth/refresh', {
         method: 'POST',
         body: JSON.stringify({
-          refresh_token: api
+          refresh_token: localStorage.getItem('refreshToken')
         })
       })
       const tokenExpiredTime = data.expire_at * 1000
@@ -131,23 +107,23 @@ export const usedefineStore = defineStore('user', () => {
   )
 
   // 取得喜愛貼文
-  const favorPosts = ref([])
-  const getFavorPost = async () => {
-    const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
-    const now = Date.now()
-    if (now > tokenExpiredTime) {
-      const refreshToken = localStorage.getItem('refreshToken')
-      await refreshApi(refreshToken)
-    }
-    const res = await $fetch('/api/collections', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${userInfo.value.access_token}`
-      }
-    })
-    console.log(res.collection_posts)
-    favorPosts.value = res.collection_posts
-  }
+  // const favorPosts = ref([])
+  // const getFavorPost = async () => {
+  //   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  //   const now = Date.now()
+  //   if (now > tokenExpiredTime) {
+  //     const refreshToken = localStorage.getItem('refreshToken')
+  //     await refreshApi(refreshToken)
+  //   }
+  //   const res = await $fetch('/api/collections', {
+  //     method: 'GET',
+  //     headers: {
+  //       Authorization: `Bearer ${userInfo.value.access_token}`
+  //     }
+  //   })
+  //   console.log(res.collection_posts)
+  //   favorPosts.value = res.collection_posts
+  // }
 
   const login = async () => {
     try {
@@ -169,10 +145,7 @@ export const usedefineStore = defineStore('user', () => {
       document.cookie = 'cookie3=value3'
       await getBookList()
       await getNoteList()
-      await getAllPost()
-      await getFavorPost()
-      await getRank()
-      await getAllRank()
+
       Router.push({ path: '/reading' })
     } catch (error) {
       console.log(error)
@@ -367,7 +340,7 @@ export const usedefineStore = defineStore('user', () => {
     isTimerStop,
     logOut,
     allPosts,
-    getAllPost,
+    // getAllPost,
     signUp,
     isLogin,
     getRank,
@@ -375,8 +348,8 @@ export const usedefineStore = defineStore('user', () => {
     FollowUser,
     followingUsers,
     allUserRank,
-    getAllRank,
-    favorPosts,
-    getFavorPost
+    getAllRank
+    // favorPosts,
+    // getFavorPost
   }
 })

@@ -195,6 +195,22 @@ definePageMeta({
   middleware: 'auth'
 })
 
+const getAllPost = async () => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    await useStore.refreshApi()
+  }
+  const data = await $fetch('/api/posts', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    }
+  })
+  posts.value = data.posts
+  return data
+}
+
 // 喜愛筆記
 const flavoredNote = computed(() => {
   return noteLists.value.filter((note) => note.note_like === 1)
@@ -208,6 +224,7 @@ const isFocus = ref(false)
 const toggleShow = () => {
   isShow.value = !isShow.value
 }
+
 const getNoteContent = async (id) => {
   const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
   const now = Date.now()
@@ -242,13 +259,35 @@ const toggleCancel = () => {
   post.value = ''
 }
 
+const getFavorPost = async () => {
+  const tokenExpiredTime = localStorage.getItem('tokenExpiredTime')
+  const now = Date.now()
+  if (now > tokenExpiredTime) {
+    const refreshToken = localStorage.getItem('refreshToken')
+    await refreshApi(refreshToken)
+  }
+  const res = await $fetch('/api/collections', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${useStore.userInfo.access_token}`
+    }
+  })
+  console.log(res.collection_posts)
+  favorPosts.value = res.collection_posts
+}
+
 onMounted(() => {
   watchEffect(() => {
-    posts.value = useStore.allPosts
-    noteLists.value = useStore.noteList
-    favorPosts.value = useStore.favorPosts
+    if (useStore.userInfo) {
+      noteLists.value = useStore.noteList
+      getFavorPost()
+      console.log('getall')
+
+      getAllPost()
+    }
   })
 })
+onMounted(() => {})
 
 // 點贊貼文
 const likePost = async (index, id, postLikable) => {
@@ -357,7 +396,7 @@ const addPost = async () => {
       }
     })
     isFocus.value = !isFocus.value
-    useStore.getAllPost()
+    getAllPost()
     console.log(res)
     const Toast = Swal.mixin({
       toast: true,

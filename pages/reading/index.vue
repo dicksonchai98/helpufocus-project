@@ -106,12 +106,12 @@
         </div>
         <div v-if="bookList === 'uncompletedList'">
           <div v-for="note in uncompletedBookList" :key="note.book_id" class="notebook-list">
-            <BookView :note="note" />
+            <LazyBookView :note="note" />
           </div>
         </div>
         <div v-else>
           <div v-for="note in completedBookList" :key="note.book_id" class="notebook-list">
-            <BookView :note="note" />
+            <LazyBookView :note="note" />
           </div>
         </div>
       </div>
