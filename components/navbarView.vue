@@ -6,13 +6,13 @@
           <NuxtLink to="/"><h2 class="title">HELP U FOCUS</h2> </NuxtLink>
         </li>
         <li>
-          <NuxtLink no-prefetch to="/reading" @click="submitLoading">閱讀總覽</NuxtLink>
+          <NuxtLink no-prefetch to="/reading" @click="useStore.submitLoading">閱讀總覽</NuxtLink>
         </li>
         <li>
-          <NuxtLink no-prefetch to="/rankingView" @click="submitLoading">排名</NuxtLink>
+          <NuxtLink no-prefetch to="/rankingView" @click="useStore.submitLoading">排名</NuxtLink>
         </li>
         <li>
-          <NuxtLink no-prefetch to="/threadsView" @click="submitLoading">社群</NuxtLink>
+          <NuxtLink no-prefetch to="/threadsView" @click="useStore.submitLoading">社群</NuxtLink>
         </li>
       </ul>
     </div>
@@ -29,24 +29,13 @@
       </div>
     </div>
   </div>
-  <loading :active="isLoading" :can-cancel="true" :is-full-page="true" />
+  <loading :active="isLoading" :can-cancel="true" />
 </template>
 
 <script setup>
 import { Icon } from '@iconify/vue'
 import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/css/index.css'
 const useStore = usedefineStore()
-
-const isLoading = ref(false)
-
-const submitLoading = () => {
-  isLoading.value = true
-  // simulate AJAX
-  setTimeout(() => {
-    isLoading.value = false
-  }, 2000)
-}
 </script>
 
 <style lang="scss" scoped>

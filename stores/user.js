@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import Swal from 'sweetalert2'
+import 'vue-loading-overlay/dist/css/index.css'
 
 export const usedefineStore = defineStore('user', () => {
   const minutes = ref(0)
@@ -7,6 +8,17 @@ export const usedefineStore = defineStore('user', () => {
   const isTimerRunning = ref(false)
   const isShow = ref(false)
   let timerInterval
+
+  const isLoading = ref(false)
+
+  const submitLoading = () => {
+    if (isLogin) {
+      isLoading.value = true
+      setTimeout(() => {
+        isLoading.value = false
+      }, 2000)
+    }
+  }
 
   const toggleTimers = () => {
     isShow.value = !isShow.value
@@ -47,6 +59,7 @@ export const usedefineStore = defineStore('user', () => {
   onBeforeMount(async () => {
     try {
       await refreshApi()
+      submitLoading()
       getBookList()
       getNoteList()
     } catch (error) {
@@ -112,7 +125,7 @@ export const usedefineStore = defineStore('user', () => {
           password: password.value
         }
       })
-      console.log('login')
+      submitLoading()
       const tokenExpiredTime = data.expire_at * 1000
       localStorage.setItem('tokenExpiredTime', tokenExpiredTime)
       localStorage.setItem('refreshToken', data.refresh_token)
@@ -323,6 +336,8 @@ export const usedefineStore = defineStore('user', () => {
     FollowUser,
     followingUsers,
     allUserRank,
-    getAllRank
+    getAllRank,
+    isLoading,
+    submitLoading
   }
 })

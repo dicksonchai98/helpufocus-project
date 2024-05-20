@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
 export default defineNuxtConfig({
   uglify: {
     uglifyOptions: {
@@ -9,29 +10,41 @@ export default defineNuxtConfig({
     }
   },
   build: {
-    splitChunks: {
-      layouts: false,
-      pages: true,
-      commons: true
+    extend(config, { isDev, isClient }) {
+      if (!isDev && isClient) {
+        config.plugins.push(
+          new CompressionWebpackPlugin({
+            filename: '[path].gz',
+            algorithm: 'gzip',
+            test: /\.(js|css|html|svg)$/,
+            threshold: 10240,
+            minRatio: 0.8,
+            deleteOriginalAssets: false
+          })
+        )
+      }
     },
-    analyze: true,
-    collapseBooleanAttributes: true,
-    collapseWhitespace: false,
-    decodeEntities: true,
-    minifyCSS: true,
-    minifyJS: true,
-    processConditionalComments: true,
-    removeAttributeQuotes: false,
-    removeComments: false,
-    removeEmptyAttributes: true,
-    removeOptionalTags: false,
-    removeRedundantAttributes: true,
-    removeScriptTypeAttributes: false,
-    removeStyleLinkTypeAttributes: false,
-    removeTagWhitespace: false,
-    sortClassName: false,
-    trimCustomFragments: true,
-    useShortDoctype: true
+    optimization: {
+      minimize: true,
+      minimizer: [],
+      splitChunks: {
+        chunks: 'all',
+        automaticNameDelimiter: '-',
+        maxSize: 102400,
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true
+          },
+          common: {
+            minChuank: 2,
+            priority: -20,
+            reuseExistingChunk: true
+          }
+        }
+      }
+    }
   },
   devtools: { enabled: true },
 
