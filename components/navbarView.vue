@@ -29,7 +29,7 @@
       </div>
     </div>
   </div>
-  <loading :active="isLoading" :can-cancel="true" />
+  <loading :active="useStore.isLoading" :can-cancel="true" />
 </template>
 
 <script setup>

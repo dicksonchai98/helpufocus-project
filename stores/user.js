@@ -58,8 +58,8 @@ export const usedefineStore = defineStore('user', () => {
 
   onBeforeMount(async () => {
     try {
-      await refreshApi()
       submitLoading()
+      await refreshApi()
       getBookList()
       getNoteList()
     } catch (error) {
