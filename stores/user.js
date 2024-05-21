@@ -12,7 +12,7 @@ export const usedefineStore = defineStore('user', () => {
   const isLoading = ref(false)
 
   const submitLoading = () => {
-    if (isLogin) {
+    if (isLogin.value === true) {
       isLoading.value = true
       setTimeout(() => {
         isLoading.value = false
