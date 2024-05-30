@@ -19,9 +19,9 @@
 ![image](https://github.com/dicksonchai98/helpufocus-project/assets/102925011/62504fb2-32b8-482c-a776-99f4594d1682)
 
 ## Features
-注冊/登入賬號
-重設密碼
-新增閲讀書籍
+-注冊/登入賬號
+-重設密碼
+-！新增閲讀書籍
 新增/刪除筆記
 編輯筆記
 新增完成頁面
