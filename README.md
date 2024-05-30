@@ -18,5 +18,22 @@
 ![image](https://github.com/dicksonchai98/helpufocus-project/assets/102925011/9d721b29-8b9d-4967-bebb-0ab5d3b58287)
 ![image](https://github.com/dicksonchai98/helpufocus-project/assets/102925011/62504fb2-32b8-482c-a776-99f4594d1682)
 
+## Features
+注冊/登入賬號
+重設密碼
+新增閲讀書籍
+新增/刪除筆記
+編輯筆記
+新增完成頁面
+收藏筆記
+觀察所有用戶閲讀進度
+追蹤用戶
+上傳/刪除貼文
+點贊貼文
+收藏其他用戶貼文
+閲讀進度條
+該書閲讀進度條
+
+
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
