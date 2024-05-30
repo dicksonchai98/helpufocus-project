@@ -9,25 +9,6 @@
 排名功能可提供用戶觀察所有注冊用戶的閲讀目標及閲讀進度，此功能的目的為達到互相督促的效果，而當中沒有順序之分。此外，提供用戶追蹤其他用戶的功能，可以直接在觀察名單上直接看到已追蹤的用戶排名
 
 ## 新增書籍及筆記
-
-Build the application for production:
-
-
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
+新增接下來想要閲讀的書籍，可在該書籍底下新增筆記。此外，功能包括新增已完成頁數、編輯筆記、收藏筆記等。當該書籍頁數已完成會自動被歸納爲完成書籍
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
