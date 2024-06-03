@@ -1,75 +1,47 @@
-# Nuxt 3 Minimal Starter
+# HELP U FOCUS專案介紹
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+此專案為團對專案，成員包括一位uiux設計師、後端工程師及前端工程師，而我在專案當中扮演的角色是前端工程師的部分。而專案的想法其實是源自於自身很愛逛書店，也買了一堆書，可是房間的書越積越多，卻沒看完幾本。可是當和朋友約在咖啡廳看書時，因環境及有人互相督促的情況下，效率會變得特別好。因此HELP U FOCUS其實是類似讀書會的web,模擬大家身處在一個環境一起看書，功能包括社群、排名、及筆記的功能。
 
-## Setup
+## 目录
 
-Make sure to install the dependencies:
+1. [社群](#社群)
+2. [排名](#排名)
+3. [新增書籍及筆記](#新增書籍及筆記)
+4. [Features](#Features)
 
-```bash
-# npm
-npm install
 
-# pnpm
-pnpm install
+## 社群
+社群功能可提供用戶上傳閲讀筆記，也能觀察別人的筆記。此外，功能還包括點贊、刪除貼文、收藏用戶貼文、新增或選擇筆記上傳
 
-# yarn
-yarn install
+![image](https://github.com/dicksonchai98/helpufocus-project/assets/102925011/7f99b8bd-bb20-4b94-8364-04ef2e7338ad)
 
-# bun
-bun install
-```
+## 排名
+排名功能可提供用戶觀察所有注冊用戶的閲讀目標及閲讀進度，此功能的目的為達到互相督促的效果，而當中沒有順序之分。此外，提供用戶追蹤其他用戶的功能，可以直接在觀察名單上直接看到已追蹤的用戶排名
 
-## Development Server
+![image](https://github.com/dicksonchai98/helpufocus-project/assets/102925011/85a134c2-26a0-4eff-8b17-f5eef75bf449)
 
-Start the development server on `http://localhost:3000`:
+## 新增書籍及筆記
+新增接下來想要閲讀的書籍，可在該書籍底下新增筆記。此外，功能包括新增已完成頁數、編輯筆記、收藏筆記等。當該書籍頁數已完成會自動被歸納爲完成書籍
 
-```bash
-# npm
-npm run dev
+![image](https://github.com/dicksonchai98/helpufocus-project/assets/102925011/9d721b29-8b9d-4967-bebb-0ab5d3b58287)
+![image](https://github.com/dicksonchai98/helpufocus-project/assets/102925011/62504fb2-32b8-482c-a776-99f4594d1682)
 
-# pnpm
-pnpm run dev
+## Features
+- 注冊/登入賬號
+- 重設密碼
+- 新增閲讀書籍
+- 新增/刪除筆記
+- 編輯筆記
+- 新增完成頁面
+- 收藏筆記
+- 觀察所有用戶閲讀進度
+- 追蹤用戶
+- 上傳/刪除貼文
+- 點贊貼文
+- 收藏其他用戶貼文
+- 閲讀進度條
+- 該書閲讀進度條
 
-# yarn
-yarn dev
 
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
