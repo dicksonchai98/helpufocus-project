@@ -154,9 +154,9 @@ onMounted(() => {
   watchEffect(async () => {
     if (useStore.userInfo.username) {
       await useStore.getAllRank()
+      allUserRank.value = useStore.allUserRank
       await useStore.getRank()
       userRank.value = useStore.userRank
-      allUserRank.value = useStore.allUserRank
       bookList.value = useStore.BookList
     }
   })

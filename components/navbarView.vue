@@ -6,18 +6,25 @@
           <NuxtLink to="/"><h2 class="title">HELP U FOCUS</h2> </NuxtLink>
         </li>
         <li>
-          <NuxtLink no-prefetch to="/reading" @click="useStore.submitLoading">閱讀總覽</NuxtLink>
+          <NuxtLink no-prefetch to="/reading" @click="useStore.submitLoading('/reading')"
+            >閱讀總覽</NuxtLink
+          >
         </li>
         <li>
-          <NuxtLink no-prefetch to="/rankingView" @click="useStore.submitLoading">排名</NuxtLink>
+          <NuxtLink no-prefetch to="/rankingView" @click="useStore.submitLoading('/rankingView')"
+            >排名</NuxtLink
+          >
         </li>
         <li>
-          <NuxtLink no-prefetch to="/threadsView" @click="useStore.submitLoading">社群</NuxtLink>
+          <NuxtLink no-prefetch to="/threadsView" @click="useStore.submitLoading('/threadsView')"
+            >社群</NuxtLink
+          >
         </li>
       </ul>
     </div>
     <div class="user">
-      <img class="user-profile" src="/man.png" alt="" />
+      <img v-if="useStore.isLogin" class="user-profile" src="/man.png" alt="" />
+      <img v-else class="user-profile" src="/profile.webp" alt="" />
       <p>{{ useStore.userInfo.username }}</p>
       <div v-show="useStore.isLogin" class="setting">
         <ul>
@@ -35,6 +42,8 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 import Loading from 'vue-loading-overlay'
+import RankingView from '~/pages/rankingView.vue'
+import ThreadsView from '~/pages/threadsView.vue'
 const useStore = usedefineStore()
 </script>
 

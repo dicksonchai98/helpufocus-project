@@ -8,11 +8,12 @@ export const usedefineStore = defineStore('user', () => {
   const isTimerRunning = ref(false)
   const isShow = ref(false)
   let timerInterval
+  const route = useRoute()
 
   const isLoading = ref(false)
 
-  const submitLoading = () => {
-    if (isLogin.value === true) {
+  const submitLoading = (routing) => {
+    if (isLogin.value === true && route.path !== routing) {
       isLoading.value = true
       setTimeout(() => {
         isLoading.value = false

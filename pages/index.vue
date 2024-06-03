@@ -4,12 +4,20 @@
       <div class="page-info">
         <div class="page-info-container">
           <div v-if="page == '0'">
-            <p>Welcome Back ,Buddy 👋</p>
+            <p>Welcome Back, Buddy 👋</p>
             <img src="../public/graphic1.svg" alt="" />
+          </div>
+          <div v-else-if="page == '1'">
+            <img src="../public/graphic2.svg" alt="" />
+            <p>社群功能讓你輕鬆分享＆結交朋友</p>
+          </div>
+          <div v-else-if="page == '2'">
+            <img src="../public/graphic2.svg" alt="" />
+            <p>可透過排名觀察別人的進度</p>
           </div>
           <div v-else>
             <img src="../public/graphic2.svg" alt="" />
-            <p>社群功能讓你輕鬆分享＆結交朋友</p>
+            <p>可透過筆記功能輕鬆記錄您的進度</p>
           </div>
           <ul>
             <li :class="{ progress: page == '0' }"></li>
@@ -17,7 +25,7 @@
             <li :class="{ progress: page == '2' }"></li>
             <li :class="{ progress: page == '3' }"></li>
           </ul>
-          <button @click="page += 1 && page < 3">Next</button>
+          <button :class="{ btn: page == '3' }" @click="page += 1 && page < 3">Next</button>
         </div>
       </div>
 
@@ -27,13 +35,13 @@
             <h1>Sign In</h1>
             <form @submit.prevent="useStore.login()">
               <div class="form-group">
-                賬號
+                帳號
                 <input
                   id="username"
                   v-model="useStore.username"
                   type="text"
                   name="username"
-                  placeholder="輸入您的賬號"
+                  placeholder="輸入您的帳號"
                   required
                 />
               </div>
@@ -66,7 +74,7 @@
                   type="text"
                   name="username"
                   maxlength="15"
-                  placeholder="輸入您的賬號"
+                  placeholder="輸入您的賬號 1-15個字"
                   required
                 />
               </div>
@@ -84,7 +92,7 @@
               </div>
               <p class="errormsg">{{ useStore.loginError.statusMessage }}</p>
               <button type="submit">注冊</button>
-              <p>我已經有賬號咯？ 😢<a href="#" @click="toggleLogin()"> 立即登入吧</a></p>
+              <p>我已經有帳號咯~ 😢<a href="#" @click="toggleLogin()"> 立即登入吧</a></p>
             </form>
           </div>
         </div>
@@ -195,6 +203,12 @@ body .logins {
       border-radius: 60px;
       margin-top: 33px;
       cursor: pointer;
+    }
+    .btn {
+      background-color: #e1e1e1;
+      color: white;
+      border: none;
+      pointer-events: none;
     }
   }
 }
