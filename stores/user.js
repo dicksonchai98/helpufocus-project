@@ -107,6 +107,7 @@ export const usedefineStore = defineStore('user', () => {
   const username = ref('')
   const password = ref('')
   const loginError = ref('')
+  const signUpError = ref('')
   const isLogin = ref(false)
   watch(
     () => isLogin,
@@ -132,6 +133,7 @@ export const usedefineStore = defineStore('user', () => {
       localStorage.setItem('refreshToken', data.refresh_token)
       username.value = ''
       password.value = ''
+      loginError.value = ''
       userInfo.value = data
       isLogin.value = true
       document.cookie = 'cookie3=value3'
@@ -155,11 +157,12 @@ export const usedefineStore = defineStore('user', () => {
       console.log(data)
     } catch (error) {
       console.log(error)
-      loginError.value = error
+      signUpError.value = error
+      return data
     }
     username.value = ''
     password.value = ''
-    Router.push({ path: '/' })
+    signUpError.value = ''
   }
 
   const followingUsers = (id) => {
@@ -327,6 +330,7 @@ export const usedefineStore = defineStore('user', () => {
     username,
     password,
     loginError,
+    signUpError,
     isTimerStop,
     logOut,
     allPosts,

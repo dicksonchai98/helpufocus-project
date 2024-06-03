@@ -56,7 +56,11 @@
                   required
                 />
               </div>
-              <p class="errormsg">{{ useStore.loginError.statusMessage }}</p>
+              <p v-show="useStore.loginError.statusCode" class="errormsg">
+                {{
+                  useStore.loginError.statusCode === 400 ? '*password too short' : '*input error'
+                }}
+              </p>
               <button type="submit">登入</button>
               <p>還沒有帳號嗎？ 😢<a href="#" @click="toggleLogin"> 立即註冊吧</a></p>
             </form>
@@ -90,7 +94,13 @@
                   required
                 />
               </div>
-              <p class="errormsg">{{ useStore.loginError.statusMessage }}</p>
+              <p v-show="useStore.signUpError.statusCode" class="errormsg">
+                {{
+                  useStore.signUpError.statusCode === 409
+                    ? '*account already exist'
+                    : '*input error'
+                }}
+              </p>
               <button type="submit">注冊</button>
               <p>我已經有帳號咯~ 😢<a href="#" @click="toggleLogin()"> 立即登入吧</a></p>
             </form>
@@ -111,9 +121,11 @@ const user = ref('')
 const toggleLogin = () => {
   isLogin.value = !isLogin.value
 }
-const signUps = () => {
-  isLogin.value = !isLogin.value
-  useStore.signUp()
+const signUps = async () => {
+  await useStore.signUp()
+  if (!useStore.signUpError) {
+    isLogin.value = !isLogin.value
+  }
 }
 onMounted(() => {
   watchEffect(() => {
